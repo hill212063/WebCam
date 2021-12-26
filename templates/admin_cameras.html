@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html>
-
-
-  <body>
+{% extends "admin_layout.html" %}
+ 
+    {% block content %} 
     <h1>Live streaming</h1>
     <div>
         {% for i in num_cams %}
+        <h1>{{i}}</h1>
+        <br>
         <div><img src="{{ url_for('video',id=i) }}" width="50%"/></div>
+        <hr>
         {% endfor %}
     </div>
-            
-    </body>
-
-
-</html>
+        <button><a href="/">Back</a></button>
+    {% endblock %}

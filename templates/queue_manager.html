@@ -1,0 +1,32 @@
+{% extends "admin_layout.html" %}
+ 
+    {% block content %}
+    <h1>Queue</h1>
+    <div>
+    <table class = 'table table-dark'>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Queue</th>
+            <th>Status</th>
+            <th>Pet's name</th>
+            <th>Pet's age</th>
+            <th>Pet's type</th>
+            <th>Note</th>
+        </tr>
+        </thead>
+        <tbody>
+       
+        {% for i in table %}
+            <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+       
+        </tbody>
+    </table>
+    </div>
+    {% endblock %}

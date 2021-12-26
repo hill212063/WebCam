@@ -1,14 +1,26 @@
-<!DOCTYPE html>
-<html>
-
-
-  <body>
-    <button><a href ="/admin">VDO</a></button>
-  </body>
+{% extends "admin_layout.html" %}
+ 
+    {% block content %}
     <div>
-      <form action="" method="post">
-        {{form.csrf_token}}
+      <form action="" method="POST">
+        {{form.hidden_tag()}}
+        {{form.name.label('Name')}}
+        {{form.name()}}<br><br>
+        {{form.surname.label('Surname')}}
+        {{form.surname()}}<br><br>
+        {{form.queue.label('Queue')}}
+        {{form.queue()}}
+        {{form.queue_time()}}<br><br>
+        {{form.pet_name.label("Pet's name")}}
+        {{form.pet_name()}}<br><br>
+        {{form.pet_age.label("Pet's age")}}
+        {{form.pet_age()}}<br><br>
+        {{form.pet_type.label("Pet's type")}}
+        {{form.pet_type()}}<br><br>
+        {{form.note.label('Note')}}
+        {{form.note()}}<br><br>
+        {{form.submit()}}     
       </form>
+      <button><a href="/">Logout</a></button>
     </div>
-
-</html>
+    {% endblock %}
