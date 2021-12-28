@@ -13,7 +13,6 @@ from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired, Length,NumberRange
 from wtforms import StringField,TextAreaField,DateField,TimeField,SubmitField,IntegerField, PasswordField
 from werkzeug.utils import redirect
-
 import os
 
 
@@ -79,7 +78,8 @@ class CreateUserForm(FlaskForm):
     queue = DateField('queue',validators=[InputRequired()])
     queue_time = TimeField('queue_time',validators=[InputRequired()])
     pet_name = StringField('pet_name',validators=[InputRequired(),Length(max=20)])
-    pet_age = IntegerField('pet_age',validators=[InputRequired(),NumberRange(min=0,max=999)])
+    pet_age_year = IntegerField('pet_age_year',validators=[InputRequired(),NumberRange(min=0,max=99)])
+    pet_age_month = IntegerField('pet_age_month',validators=[InputRequired(),NumberRange(min=0,max=11)])
     pet_type = StringField('pet_type',validators=[InputRequired(),Length(max=10)])
     note = TextAreaField('note')
     cam = IntegerField('cam',validators=[InputRequired(),NumberRange(min=0,max=1)])
@@ -94,7 +94,7 @@ def submit():
         pwd = form.password.data
         queue_timestamp=str(form.queue.data)+" "+str(form.queue_time.data)
         pet_name = form.pet_name.data
-        pet_age = form.pet_age.data
+        pet_age = str(form.pet_age_year.data)+":"+str(form.pet_age_month.data)
         pet_type = form.pet_type.data
         note = form.note.data
         cam = form.cam.data
@@ -108,14 +108,14 @@ def submit():
     return render_template('index.html', form=form)
 
 
-@app.route('/admin/queue_management')
-def queue_management():
+@app.route('/admin/queue')
+def queue():
     cursor = mysql.connection.cursor()
     cursor.execute('''SELECT  name, surname, queue_time,status,pet_name,pet_age,pet_type,camera_id,note FROM %s'''%(os.getenv('DATABASE_TABLE_CLIENT_NAME')))
     mysql.connection.commit()
     data = cursor.fetchall()
     cursor.close()
-    return render_template('queue_management.html',table=data)
+    return render_template('admin_queue.html',table=data)
 #######################################   ADMIN   #######################################  
 
 

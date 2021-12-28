@@ -1,0 +1,47 @@
+{% extends "admin_layout.html" %}
+ 
+    {% block content %}
+    <div class="row justify-content-center ml-2 mr-2">
+        <div class="col-md-6 text-center mb-5">
+            <h2 class="heading-section">Queue</h2>
+            <div></div>
+        </div>
+
+    <div>
+    <table class='table' style="color: #6c757d;" id ='table'
+    data-toggle="table"
+    data-search="true"
+    data-filter-control="true" 
+    data-show-export="true"
+    data-click-to-select="true"
+    data-toolbar="#toolbar">
+        <thead >
+        <tr>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Queue</th>
+            <th>Status</th>
+            <th>Pet's name</th>
+            <th>Pet's age</th>
+            <th>Pet's type</th>
+            <th>Camera ID</th>
+            <th>Note</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for i in range(table|length) %}
+            <tr>
+            {% for j in range(table[i]|length -1) %}
+            <td>{{table[i][j]}}</td>
+            {% endfor %}
+            <td >
+            <textarea style="width: 300px; height:100px;color: #6c757d; border: 0;" readonly>{{table[i][-1]}}</textarea>   
+            </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    </div>
+    </div>
+    {% endblock %}
