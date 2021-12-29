@@ -1,6 +1,7 @@
 {% extends "admin_layout.html" %}
  
     {% block content %}
+    
     <div class="row justify-content-center ml-2 mr-2">
         <div class="col-md-6 text-center mb-5">
             <h2 class="heading-section">Queue</h2>
@@ -8,40 +9,130 @@
         </div>
 
     <div>
-    <table class='table' style="color: #6c757d;" id ='table'
+    <table class='table' style="color: #6c757d;  table-layout: fixed; word-wrap: break-word;" id ='table'
     data-toggle="table"
     data-search="true"
     data-filter-control="true" 
     data-show-export="true"
     data-click-to-select="true"
-    data-toolbar="#toolbar">
-        <thead >
+    data-pagination="true"
+    data-detail-view="true"
+    data-detail-view-by-click="false"
+    data-detail-view-icon="true"
+    data-detail-formatter="detailFormatter">
+        <thead>
         <tr>
-            <th>Name</th>
-            <th>Surname</th>
-            <th>Queue</th>
-            <th>Status</th>
-            <th>Pet's name</th>
-            <th>Pet's age</th>
-            <th>Pet's type</th>
-            <th>Camera ID</th>
-            <th>Note</th>
+            
+            <th >Name</th>
+            <th >Surname</th>
+            <th >Queue</th>
+            <th >Status</th>
+            <th >Pet's name</th>
+            <th >Pet's age</th>
+            <th >Pet's type</th>
+            <th >Camera ID</th>
+            <th data-visible="false">Note</th>
+            <th>Actions</th>
+            
+          
         </tr>
         </thead>
         <tbody>
+            
             {% for i in range(table|length) %}
             <tr>
-            {% for j in range(table[i]|length -1) %}
+            {% for j in range(table[i]|length) %}
+            {% if j!=0 %}
             <td>{{table[i][j]}}</td>
+            {% endif %}
             {% endfor %}
-            <td >
-            <textarea style="width: 300px; height:100px;color: #6c757d; border: 0;" readonly>{{table[i][-1]}}</textarea>   
+            <td>
+                <diV style="width:150px;">
+                <button href="/admin/queue/update/{{table[i][0]}}" id ="edit{{table[i][0]}} "type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{table[i][0]}}">
+                    Edit
+                  </button>
+                  <button id ="print{{table[i][0]}}"  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printModal">
+                    <i class="bi bi-printer"></i>
+                  </button>
+                  <button href="/admin/queue/delete/{{table[i][0]}}" id ="delete{{table[i][0]}}" onclick= "return confirm('Are You Sure To Delete ?')" type="button" class="btn btn-primary">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </diV>
+                  <!--Edit  Modal -->
+                    <div class="modal fade" id="editModal{{table[i][0]}}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Edit</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">    
+                                <form action="{{url_for('update_table')}}" class="signup-form" method='post' enctype="multipart/form-data" >
+                                    <input type="hidden"  name="id" value="{{table[i][0]}}" />
+                                    <div class="form-group mb-4">
+                                        <label class="label">Name</label>
+                                        <input name="name" maxlength="50" class="form-control" value="{{table[i][1]}}" required="1"/>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="label" >Surname</label>
+                                        <input name="surname"  maxlength="50" class="form-control" value="{{table[i][2]}}" required="1"/>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="label" >Queue</label>
+                                        <input name="queue" type="datetime-local" class="form-control" value="{{table[i][3]}}" required="1"/>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="label" >Pet's name</label>
+                                        <input  name="pet_name" maxlength="20" class="form-control" value="{{table[i][5]}}" required="1"/>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="label" >Pet's age</label>
+                                        <input  pattern ="^[0-9]{1,2}:([0-9]|11{1,2})$" name="pet_age" class="form-control" value="{{table[i][6]}}" required="1"/>
+                                        
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="label" >Pet's type</label>
+                                        <input name="pet_type" maxlength="10" class="form-control" value="{{table[i][7]}}" required="1"/>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="label" >Camera ID</label>
+                                        <input   name="cam_id" type="number" min="0" max="1" style="color:#6c757d; border-width: 0.5px; border-radius: 5px; "value="{{table[i][8]}}" required="1"/>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label class="label" >Note</label>
+                                        <textarea name="note" style="color: #6c757d; width:100%; height:200px;border-radius: 5px;" value="{{table[i][9]}}"></textarea>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <button class="btn btn-primary" >Save changes</button>
+                                        <button   name="submit" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>        
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+
+
+
             </td>
             </tr>
             {% endfor %}
-
         </tbody>
     </table>
     </div>
     </div>
+
+
+
+
+    <script>
+        function detailFormatter(index, row) {
+            console.log(row)
+            var html = []
+            html.push('<p><b>' +"Note" + ':</b> ' + row[8] + '</p>')
+            return html.join('')
+        }
+       console.log($('#'))
+      </script>
     {% endblock %}

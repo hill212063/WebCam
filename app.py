@@ -1,4 +1,4 @@
-from flask import Flask,render_template,Response,request,session,g,jsonify
+from flask import Flask,render_template,Response,request,session,g,jsonify,redirect
 from flask_mysqldb import MySQL
 from flask.helpers import url_for
 #from flask_socketio import SocketIO,emit
@@ -12,7 +12,6 @@ from imutils.video import FPS
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired, Length,NumberRange
 from wtforms import StringField,TextAreaField,DateField,TimeField,SubmitField,IntegerField, PasswordField
-from werkzeug.utils import redirect
 import os
 
 
@@ -64,14 +63,14 @@ def gen(id):
 
 #######################################   ADMIN   #######################################  
 @app.route('/admin/cameras')
-def admin():
+def admin_cameras():
     return render_template('admin_cameras.html',num_cams=num_cams)
 
 @app.route('/admin/cameras/<int:id>')
 def video(id):
     return( Response(gen(id),mimetype='multipart/x-mixed-replace; boundary=frame'))
     
-class CreateUserForm(FlaskForm):
+class UserForm(FlaskForm):
     name = StringField('name', validators=[InputRequired(),Length(max=50)])
     surname = StringField('surname', validators=[InputRequired(),Length(max=50)])
     password = StringField('password',validators=[InputRequired(),Length(max=40)])
@@ -85,9 +84,10 @@ class CreateUserForm(FlaskForm):
     cam = IntegerField('cam',validators=[InputRequired(),NumberRange(min=0,max=1)])
     submit = SubmitField('submit')   
 
+
 @app.route('/', methods= ['GET','POST'])
 def submit():
-    form = CreateUserForm()
+    form = UserForm()
     if form.validate_on_submit():
         name = form.name.data
         surname = form.surname.data
@@ -100,22 +100,50 @@ def submit():
         cam = form.cam.data
         cursor = mysql.connection.cursor()
         cursor.execute('''INSERT INTO `%s` ( `name`, `surname`, `queue_time`, `pet_name`, `pet_age`, `pet_type`,`password`,`camera_id`, `note`)
-        VALUES ('%s','%s','%s','%s','%s','%s','%s',%s,'%s');'''
+        VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s');'''
         %(os.getenv('DATABASE_TABLE_CLIENT_NAME'),name,surname,queue_timestamp,pet_name,pet_age,pet_type, pwd,cam ,note))
         mysql.connection.commit()
         cursor.close()
-        return render_template('index.html', form=form)
     return render_template('index.html', form=form)
 
 
-@app.route('/admin/queue')
+@app.route('/admin/queue', methods= ['GET','POST'])
 def queue():
     cursor = mysql.connection.cursor()
-    cursor.execute('''SELECT  name, surname, queue_time,status,pet_name,pet_age,pet_type,camera_id,note FROM %s'''%(os.getenv('DATABASE_TABLE_CLIENT_NAME')))
+    cursor.execute('''SELECT  id,name, surname, queue_time,status,pet_name,pet_age,pet_type,camera_id,note FROM `%s`'''%(os.getenv('DATABASE_TABLE_CLIENT_NAME')))
     mysql.connection.commit()
     data = cursor.fetchall()
     cursor.close()
     return render_template('admin_queue.html',table=data)
+
+
+@app.route('/admin/queue/update',methods = ['GET', 'POST'])
+def update_table():
+    if request.method == 'POST':
+        row_id=request.form['id']
+        name = request.form['name']
+        surname=request.form['id']
+        queue_timestamp = request.form['queue']
+        pet_name = request.form['pet_name']
+        pet_age = request.form['pet_age']
+        pet_type = request.form['pet_type']
+        cam = request.form['cam_id']
+        note = request.form['note']
+        cursor = mysql.connection.cursor()
+        cursor.execute('''UPDATE `%s` SET `name`='%s',`surname`='%s',`queue_time`='%s',
+        `pet_name`='%s',`pet_age`='%s',`pet_type`='%s',`camera_id`='%s',`note`='%s' WHERE `id`='%s' '''
+        %(os.getenv('DATABASE_TABLE_CLIENT_NAME'),name,surname,queue_timestamp,pet_name,pet_age,pet_type,cam ,note,row_id))
+        mysql.connection.commit()
+        cursor.close()
+    return redirect(url_for('queue'))
+
+@app.route('/admin/queue/delete/<int:id>',methods = ['GET', 'POST'])
+def delete_table(row_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute('''DELETE FROM `%s` WHERE `id`='%s' '''%(os.getenv('DATABASE_TABLE_CLIENT_NAME'),row_id))
+    mysql.connection.commit()
+    cursor.close()
+    return redirect(url_for('queue'))
 #######################################   ADMIN   #######################################  
 
 
