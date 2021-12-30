@@ -2,14 +2,29 @@
  
     {% block content %}
     
-    <div class="row justify-content-center ml-2 mr-2">
+    <div class="row justify-content-center ml-1 mr-1">
         <div class="col-md-6 text-center mb-5">
             <h2 class="heading-section">Queue</h2>
             <div></div>
         </div>
 
-    <div>
-    <table class='table' style="color: #6c757d;  table-layout: fixed; word-wrap: break-word;" id ='table'
+        <div id="toolbar">
+            <div class="form-inline" role="form">
+              <div class="form-group">
+                <span>From Date: </span>
+                <input id="from_date" name="from_date" class="form-control w70" type="date" >
+              </div>
+              <div class="form-group" >
+                <span style="margin-left: 20px ;">To Date: </span>
+                <input id ="to_date" name="to_date" class="form-control w70" type="date" style="margin-right: 20px ;" >
+              </div>
+              <div style="margin-right:10px ;"> <button id="ok_filter" type="submit" class="btn btn-primary">OK</button></div>
+              <div> <button id="clear_filter" type="submit" class="btn btn-secondary">Clear</button></div>
+            </div>
+          </div>
+
+
+    <table class='table' style="color: #6c757d; table-layout: fixed; word-wrap: break-word;" id ='table' 
     data-toggle="table"
     data-search="true"
     data-filter-control="true" 
@@ -19,18 +34,24 @@
     data-detail-view="true"
     data-detail-view-by-click="false"
     data-detail-view-icon="true"
-    data-detail-formatter="detailFormatter">
+    data-detail-formatter="detailFormatter"
+    data-sort-order="desc"
+    data-sort-name="queue_head"
+    data-toolbar="#toolbar"
+    data-auto-refresh="true"
+   >
+    
         <thead>
         <tr>
             
-            <th >Name</th>
-            <th >Surname</th>
-            <th >Queue</th>
-            <th >Status</th>
-            <th >Pet's name</th>
-            <th >Pet's age</th>
-            <th >Pet's type</th>
-            <th >Camera ID</th>
+            <th  data-sortable="true" >Name</th>
+            <th  data-sortable="true" >Surname</th>
+            <th  data-sortable="true" data-field='queue_head' >Queue</th>
+            <th data-sortable="true" >Status</th>
+            <th data-sortable="true" >Pet's name</th>
+            <th  data-sortable="true" >Pet's age</th>
+            <th data-sortable="true" >Pet's type</th>
+            <th data-sortable="true" >Camera ID</th>
             <th data-visible="false">Note</th>
             <th>Actions</th>
             
@@ -48,18 +69,20 @@
             {% endfor %}
             <td>
                 <diV style="width:150px;">
-                <button href="/admin/queue/update/{{table[i][0]}}" id ="edit{{table[i][0]}} "type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{table[i][0]}}">
-                    Edit
-                  </button>
-                  <button id ="print{{table[i][0]}}"  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printModal">
+                  <a id ="print{{table[i][0]}}"  type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printModal{{table[i][0]}}">
                     <i class="bi bi-printer"></i>
-                  </button>
-                  <button href="/admin/queue/delete/{{table[i][0]}}" id ="delete{{table[i][0]}}" onclick= "return confirm('Are You Sure To Delete ?')" type="button" class="btn btn-primary">
+                  </a>
+                  <a  id ="edit{{table[i][0]}} "type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{table[i][0]}}">
+                    Edit
+                  </a>
+                  <a href="/admin/queue/delete/{{table[i][0]}}" id ="delete{{table[i][0]}}" onclick= "return confirm('Are You Sure To Delete ?')" type="button" class="btn btn-primary">
                     <i class="bi bi-trash"></i>
-                  </button>
+                  </a>
                 </diV>
+
+
                   <!--Edit  Modal -->
-                    <div class="modal fade" id="editModal{{table[i][0]}}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="editModal{{table[i][0]}}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" >
                         <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -67,7 +90,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">    
-                                <form action="{{url_for('update_table')}}" class="signup-form" method='post' enctype="multipart/form-data" >
+                                <form action="{{url_for('update_table')}}" class="signup-form"  style="color: #6c757d;" method='post' enctype="multipart/form-data" >
                                     <input type="hidden"  name="id" value="{{table[i][0]}}" />
                                     <div class="form-group mb-4">
                                         <label class="label">Name</label>
@@ -79,28 +102,29 @@
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="label" >Queue</label>
-                                        <input name="queue" type="datetime-local" class="form-control" value="{{table[i][3]}}" required="1"/>
+                                        <input name="queue" type="datetime-local" class="form-control" value="{{table[i][3].strftime('%Y-%m-%dT%H:%M')}}" required="1"/>
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="label" >Pet's name</label>
                                         <input  name="pet_name" maxlength="20" class="form-control" value="{{table[i][5]}}" required="1"/>
                                     </div>
                                     <div class="form-group mb-4">
-                                        <label class="label" >Pet's age</label>
-                                        <input  pattern ="^[0-9]{1,2}:([0-9]|11{1,2})$" name="pet_age" class="form-control" value="{{table[i][6]}}" required="1"/>
-                                        
-                                    </div>
-                                    <div class="form-group mb-4">
                                         <label class="label" >Pet's type</label>
                                         <input name="pet_type" maxlength="10" class="form-control" value="{{table[i][7]}}" required="1"/>
                                     </div>
                                     <div class="form-group mb-4">
-                                        <label class="label" >Camera ID</label>
-                                        <input   name="cam_id" type="number" min="0" max="1" style="color:#6c757d; border-width: 0.5px; border-radius: 5px; "value="{{table[i][8]}}" required="1"/>
+                                        <label class="label" >Pet's age</label>
+                                        <input type="number" min= '0' max = '99'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " name="pet_age_year"  value="{{(table[i][6].split(':'))[0]}}" required="1"/>
+                                        <label class="label" >year</label>
+                                        <input type="number" min= '0' max = '11'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " name="pet_age_month" value="{{(table[i][6].split(':'))[1]}}" required="1"/>
+                                        <label class="label" >month</label>
+                                    </div>
+                                    <div>
+                                        <label class="label" style="color: red;">***Can't change camera because the token has been created.</label>
                                     </div>
                                     <div class="form-group mb-4">
                                         <label class="label" >Note</label>
-                                        <textarea name="note" style="color: #6c757d; width:100%; height:200px;border-radius: 5px;" value="{{table[i][9]}}"></textarea>
+                                        <textarea name="note" style="color: #6c757d; width:100%; height:200px;border-radius: 5px;" >{{table[i][-1]}}</textarea>
                                     </div>
                                     <div class="form-group mb-4">
                                         <button class="btn btn-primary" >Save changes</button>
@@ -112,7 +136,33 @@
                         </div>
                     </div>
 
-
+                    <!-- Print Modal -->
+                    <div class="modal fade" id="printModal{{table[i][0]}}" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="printModalLabel">Print</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table  style="color: #6c757d; width: 100%;  table-layout: fixed; word-wrap: break-word;">
+                                    <tr><td><label class="label" >Name: {{table[i][1]}}</label></td></tr>
+                                    <tr><td><label class="label" >Surname: {{table[i][2]}}</label></td></tr>
+                                    <tr><td><label class="label" >Queue time: {{table[i][3]}} </label></td></tr>
+                                    <tr><td><label class="label" >Pet's name: {{table[i][4]}}</label></td></tr>
+                                    <tr><td><label class="label" >Pet's age: {{table[i][5]}}</label></td></tr>
+                                    <tr><td><label class="label" >Pet's type: {{table[i][6]}}</label></td></tr>
+                                    <tr><td><label class="label" >Camera ID: {{table[i][7]}}</label></td></tr>
+                                    <tr><td><label class="label" >Note: {{table[i][-1]}}</label></td></tr>    
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Print</button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
 
 
             </td>
@@ -124,15 +174,72 @@
     </div>
 
 
-
-
     <script>
+      
         function detailFormatter(index, row) {
             console.log(row)
             var html = []
             html.push('<p><b>' +"Note" + ':</b> ' + row[8] + '</p>')
             return html.join('')
         }
-       console.log($('#'))
+
+
+
+
+        $(function() {
+            $('#table').bootstrapTable()
+        })
+        function getDates(startDate, stopDate) {
+            var datetimeArray = [];
+            var dateArray = [];
+            var date_interval=[];
+            {% for i in range(table|length) %}
+                datetimeArray.push('{{table[i][3]}}');
+                dateArray.push("{{table[i][3].strftime('%Y-%m-%d')}}");
+            {% endfor %}
+            if(!startDate && !stopDate){
+                return  datetimeArray
+            }
+
+            for(let i =0;i<dateArray.length;i++){
+                let date_check = new Date(dateArray[i])
+                let stadate= new Date(startDate)
+                let stodate= new Date(stopDate)
+               
+                if(date_check>=stadate && date_check<= stodate ){
+                    date_interval.push(datetimeArray[i]);
+                }else if(date_check>=stadate && !(stopDate)){
+                    date_interval.push(datetimeArray[i]);
+                }else if(date_check<= stodate && !(startDate)){
+                    date_interval.push(datetimeArray[i]);
+                }
+            }
+            return date_interval;
+        }
+
+
+        $('#ok_filter').click(function() {
+
+            var $table = $('#table')
+            var from = $("input[type=date][name=from_date]").val();
+            var to = $("input[type=date][name=to_date]").val();
+            //console.log(getDates(from, to))
+            $table.bootstrapTable('filterBy', {
+                queue_head: getDates(from, to)
+            })
+        })
+
+        $('#clear_filter').click(function() {
+            //console.log(getDates(from, to))
+            var $table = $('#table')
+            $('#from_date').val('')
+            $('#to_date').val('')
+            
+            $table.bootstrapTable('filterBy', {
+                queue_head: getDates(null,null)
+            })
+        })
+
+
       </script>
     {% endblock %}

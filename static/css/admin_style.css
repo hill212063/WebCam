@@ -2118,7 +2118,7 @@ fieldset:disabled a.btn {
     .btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus,
     .show > .btn-secondary.dropdown-toggle:focus {
       -webkit-box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5);
-      box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5); }
+      box-shadow: 0 0 0 0.2rem rgba(145, 130, 143, 0.5); }
 
 .btn-success {
   color: #fff;
@@ -4001,6 +4001,7 @@ input[type="button"].btn-block {
   color: #6c757d; }
 
 .pagination {
+
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -4019,15 +4020,17 @@ input[type="button"].btn-block {
   border: 1px solid #dee2e6; }
   .page-link:hover {
     z-index: 2;
-    color: #0056b3;
+    color: #d5c455;
     text-decoration: none;
     background-color: #e9ecef;
     border-color: #dee2e6; }
   .page-link:focus {
     z-index: 2;
     outline: 0;
-    -webkit-box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); }
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5);
+    box-shadow: 0 0 0 0.2rem rgba(145, 130, 143, 0.5); 
+    }
+    
 
 .page-item:first-child .page-link {
   margin-left: 0;
@@ -4041,8 +4044,8 @@ input[type="button"].btn-block {
 .page-item.active .page-link {
   z-index: 1;
   color: #fff;
-  background-color: #007bff;
-  border-color: #007bff; }
+  background-color: #d5c455;
+  border-color: #d5c455;}
 
 .page-item.disabled .page-link {
   color: #6c757d;
@@ -8234,7 +8237,7 @@ h1, h2, h3, h4, h5,
 .form-control {
   height: 40px;
   background: #fff;
-  color: #000;
+  color: #6c757d;
   font-size: 18px;
   border-radius: 0;
   -webkit-box-shadow: none;
@@ -8299,7 +8302,8 @@ textarea.form-control {
   box-shadow: none;
   font-size: 15px; }
   .btn:hover, .btn:active, .btn:focus {
-    outline: none; }
+    outline: none; 
+  }
   .btn.btn-primary {
     background: #d5c455 !important;
     border: 1px solid #d5c455 !important;
@@ -8322,3 +8326,31 @@ textarea.form-control {
 
 .submit {
   width: 100%; }
+.pagination > li > a
+{
+    background-color: white;
+    color: #d5c455;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover
+{
+    color: #d5c455;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
+.pagination > .active > a
+{
+    color: white;
+    background-color: #d5c455;
+    border: solid 1px #d5c455;
+}
+
+.pagination > .active > a:hover
+{
+    background-color: #d5c455;
+    border: solid 1px #d5c455;
+}

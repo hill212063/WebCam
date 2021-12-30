@@ -1,0 +1,109 @@
+{% extends "admin_layout.html" %}
+ 
+    {% block content %}
+  
+	<section >
+    <br>
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">Create user</h2>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+			
+			<div class="login-wrap p-4 p-md-5 mb-4">
+
+            <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6 col-xl-5">
+			<form action="{{url_for('submit')}}" class="signup-form" method='post' >
+
+				<div class="form-group mb-4">
+					<label class="label">Name</label>
+					<input name="name" maxlength="50" class="form-control"  required="1"/>
+				</div>
+				<div class="form-group mb-4">
+					<label class="label" >Surname</label>
+					<input name="surname"  maxlength="50" class="form-control"  required="1"/>
+				</div>
+				<div class="form-group mb-4">
+	            	<label class="label">Password</label>
+					<input name="password"  maxlength="40" class="form-control"  required="1"/>
+	            </div>
+				<div class="form-group mb-4">
+					<label class="label" >Queue</label>
+					<input name="queue" type="datetime-local" class="form-control" required="1"/>
+				</div>
+				<div class="form-group mb-4">
+					<label class="label" >Camera ID</label>
+					<select id='cam' name="cam_id" style="color:#6c757d; border-width: 0.5px; border-radius: 5px;"  required="1">
+					{% for i in num_cams %}
+						<option id='camera{{i}}' >{{i}}</option>
+					{% endfor %}
+					</select>
+				</div>
+            </div>
+
+
+
+            <div class="col-md-7 col-lg-6 col-xl-5">
+				<div class="form-group mb-4">
+					<label class="label" >Pet's name</label>
+					<input  name="pet_name" maxlength="20" class="form-control" required="1"/>
+				</div>
+				<div class="form-group mb-4">
+					<label class="label" >Pet's type</label>
+					<input name="pet_type" maxlength="10" class="form-control"  required="1"/>
+				</div>
+				<div class="form-group mb-4">
+					<label class="label" >Pet's age</label>
+                    <input type="number" min= '0' max = '99'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " name="pet_age_year"   required="1"/>
+                    <label class="label" >year</label>
+                    <input type="number" min= '0' max = '11'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " name="pet_age_month"  required="1"/>
+                    <label class="label" >month</label>
+				</div>
+				<div class="form-group mb-4">
+					<label class="label" >Note</label>
+					<textarea name="note" style="color: #6c757d; width:100%; height:200px;border-radius: 5px;" ></textarea>
+				</div>
+				<div class="form-group mb-4">
+					<button type='submit'class="btn btn-primary" >Submit</button>
+					<button type="button" class="btn btn-secondary">Close</button>
+				</div>
+	          </form>
+            </div>
+
+
+			</div>
+			</div>
+		</div>
+	</section>
+<script  rel="javascript" type="text/javascript" >
+
+	var cam=document.getElementById('cam')
+	function check(){
+		$.ajax({
+                type: "GET",
+                url: "{{url_for('check_cam_busy')}}",
+                contentType: "application/json",
+                dataType: 'json',
+                success:function(data){
+				for(let i =0;i<Object.keys(data).length;i++){
+					id = 'camera'+i;
+					var opt = document.getElementById(id)
+					console.log(data[i])
+					if(data[i]){
+						opt.setAttribute("disabled", "disabled");						
+					}
+				}	
+                },
+            })
+	}
+	cam.addEventListener('focusin', check);
+	
+</script>
+
+
+  {% endblock %}
+
+    
