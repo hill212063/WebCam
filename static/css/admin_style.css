@@ -5645,6 +5645,21 @@ button.bg-dark:focus {
     display: inline-flex !important; } }
 
 @media print {
+  body * {
+    visibility:hidden;
+  }
+  #printSection, #printSection * {
+    visibility:visible;
+  }
+  #printSection {
+    position:absolute;
+    left:20px;
+    right:20px;
+    top:0;
+  }
+  .container {
+    width: auto;}
+
   .d-print-none {
     display: none !important; }
   .d-print-inline {

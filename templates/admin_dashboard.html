@@ -16,29 +16,30 @@
 
             <div class="row justify-content-center">
             <div class="col-md-7 col-lg-6 col-xl-5">
-			<form action="{{url_for('submit')}}" class="signup-form" method='post' >
+			<form action="{{url_for('submit')}}" class="signup-form" method='post' id ='form'>
 
 				<div class="form-group mb-4">
 					<label class="label">Name</label>
-					<input name="name" maxlength="50" class="form-control"  required="1"/>
+					<input id="name" name="name" maxlength="50" class="form-control"  required="1"/>
 				</div>
 				<div class="form-group mb-4">
 					<label class="label" >Surname</label>
-					<input name="surname"  maxlength="50" class="form-control"  required="1"/>
+					<input id="surname" name="surname"  maxlength="50" class="form-control"  required="1"/>
 				</div>
 				<div class="form-group mb-4">
 	            	<label class="label">Password</label>
-					<input name="password"  maxlength="40" class="form-control"  required="1"/>
+					<input id="password" name="password"  maxlength="50" class="form-control"  required="1"/>
 	            </div>
 				<div class="form-group mb-4">
 					<label class="label" >Queue</label>
-					<input name="queue" type="datetime-local" class="form-control" required="1"/>
+					<input id="queue" name="queue" type="datetime-local" class="form-control" required="1"/>
 				</div>
 				<div class="form-group mb-4">
 					<label class="label" >Camera ID</label>
-					<select id='cam' name="cam_id" style="color:#6c757d; border-width: 0.5px; border-radius: 5px;"  required="1">
+					<select required class="form-control" id='cam' name="cam_id" >
+					<option value="">Select the camera ID</option>
 					{% for i in num_cams %}
-						<option id='camera{{i}}' >{{i}}</option>
+						<option id='camera{{i}}' value="{{i}}">{{i}}</option>
 					{% endfor %}
 					</select>
 				</div>
@@ -49,26 +50,26 @@
             <div class="col-md-7 col-lg-6 col-xl-5">
 				<div class="form-group mb-4">
 					<label class="label" >Pet's name</label>
-					<input  name="pet_name" maxlength="20" class="form-control" required="1"/>
+					<input  id="pet_name" name="pet_name" maxlength="20" class="form-control" required="1"/>
 				</div>
 				<div class="form-group mb-4">
 					<label class="label" >Pet's type</label>
-					<input name="pet_type" maxlength="10" class="form-control"  required="1"/>
+					<input id="pet_type" name="pet_type" maxlength="10" class="form-control"  required="1"/>
 				</div>
 				<div class="form-group mb-4">
 					<label class="label" >Pet's age</label>
-                    <input type="number" min= '0' max = '99'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " name="pet_age_year"   required="1"/>
+                    <input type="number" min= '0' max = '99'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " id="pet_age_year" name="pet_age_year"   required="1"/>
                     <label class="label" >year</label>
-                    <input type="number" min= '0' max = '11'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " name="pet_age_month"  required="1"/>
+                    <input type="number" min= '0' max = '11'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " id="pet_age_month" name="pet_age_month"  required="1"/>
                     <label class="label" >month</label>
 				</div>
 				<div class="form-group mb-4">
 					<label class="label" >Note</label>
-					<textarea name="note" style="color: #6c757d; width:100%; height:200px;border-radius: 5px;" ></textarea>
+					<textarea id="note" name="note" style="color: #6c757d; width:100%; height:200px;border-radius: 5px;" ></textarea>
 				</div>
 				<div class="form-group mb-4">
-					<button type='submit'class="btn btn-primary" >Submit</button>
-					<button type="button" class="btn btn-secondary">Close</button>
+					<button id = 'confirm' type="button" class="btn btn-primary"  >Confirm</button>
+					<button type="reset"  class="btn btn-secondary">Reset</button>
 				</div>
 	          </form>
             </div>
@@ -77,9 +78,78 @@
 			</div>
 			</div>
 		</div>
+
+
+		  <!-- Print Modal -->
+		  <div class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+				<h5 class="modal-title" id="printModalLabel">Print</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div id = "print_comp" class ="modal-body" style="display: grid; ">
+					<div style="place-self: center; margin: 10px;"><img id='qrcode' src="{{ qrcode('http://localhost:5000/login') }}"/></div>
+					<div style="place-self:left; margin: 10px;">
+						<label id = "label_name" class="label" ></label><br>
+						<label id = "label_surname" class="label" >Surname : </label><br>
+						<label id = "label_q_time" class="label" >Queue time : </label><br>
+						<label id = "label_pet_name" class="label" >Pet's name : </label><br>
+						<label id = "label_pet_age" class="label" >Pet's age : </label><br>
+						<label id = "label_pet_type" class="label" >Pet's type : </label><br>
+						<label id = "label_cam_id" class="label" >Camera ID : </label><br>
+						<label id = "label_note" class="label" >Note : </label><br>
+					</div>
+				</div>
+				<div class="modal-footer">
+				<button type="submit" id ="sub_print" class="btn btn-primary">Submit & Print</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				</div>
+			</div>
+			</div>
+		</div>
+
+
 	</section>
 <script  rel="javascript" type="text/javascript" >
 
+
+	$('#printModal').on('show.bs.modal', function (event) {
+		let data = $('#form').serializeArray()
+		//console.log(data)
+		$("#label_name").text("Name : "+data[0]["value"])
+		$("#label_surname").text("Surname : "+data[1]["value"])
+		$("#label_q_time").text("Queue time : "+data[3]["value"].replace('T',' '))
+		$("#label_pet_name").text("Pet's name : "+data[5]["value"])
+		$("#label_pet_age").text("Pet's age : "+data[6]["value"] +" (years:months)")
+		$("#label_pet_type").text("Pet's type : "+data[7]["value"])
+		$("#label_cam_id").text("Camera ID : "+data[4]["value"])
+		$("#label_note").text("Note : "+data[9]["value"])
+	})
+
+
+	$('#confirm').click(()=>{
+		
+		var form = document.getElementById('form')
+		if(form.reportValidity()){
+
+			$("#printModal").modal("show");
+		}
+	})
+	$('#sub_print').click(()=>{
+		var elem = document.getElementById('print_comp')
+		var domClone = elem.cloneNode(true);
+		var $printSection = document.getElementById("printSection");
+		if (!$printSection) {
+			var $printSection = document.createElement("div");
+			$printSection.id = "printSection";
+			document.body.appendChild($printSection);
+		}
+		$printSection.innerHTML = "";
+		$printSection.appendChild(domClone);
+		window.print();
+		$('#form').submit();
+	})
 	var cam=document.getElementById('cam')
 	function check(){
 		$.ajax({
@@ -88,10 +158,11 @@
                 contentType: "application/json",
                 dataType: 'json',
                 success:function(data){
+				
 				for(let i =0;i<Object.keys(data).length;i++){
 					id = 'camera'+i;
 					var opt = document.getElementById(id)
-					console.log(data[i])
+					//console.log(data[i])
 					if(data[i]){
 						opt.setAttribute("disabled", "disabled");						
 					}

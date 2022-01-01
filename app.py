@@ -1,4 +1,4 @@
-from flask import Flask,render_template,Response,request,session,g,jsonify,redirect
+from flask import Flask,render_template,Response,request,session,g,jsonify,redirect,send_file,flash
 from flask_mysqldb import MySQL
 from flask.helpers import url_for
 #from flask_socketio import SocketIO,emit
@@ -13,14 +13,17 @@ from imutils.video import FPS
 #from wtforms.validators import InputRequired, Length,NumberRange
 #from wtforms import StringField,TextAreaField,DateField,TimeField,SubmitField,IntegerField, PasswordField
 from flask_qrcode import QRcode
+#import qrcode
+#from io import BytesIO
 import os
 
 
 now = datetime.now()
 app=Flask(__name__)
+QRcode(app)
 #cors = CORS(app, resources={r"/*": {"origins": "*"}})
 #socketio= SocketIO(app,cors_allowed_origins='*')
-num_cams = [0,1]
+num_cams = [0,1,2,3,4,5,6,7,8,9,10] #ใช้ได้จริง 2
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
@@ -65,8 +68,10 @@ def check_cam_busy_invidual(cam_id):
     mysql.connection.commit()
     data = cursor.fetchall()
     cursor.close()
-    if(data): return True
-    else: return False
+    if(data): 
+        return True
+    else: 
+        return False
 
 @app.route('/admin/cameras')
 def admin_cameras():
@@ -129,9 +134,8 @@ def update_table():
         cursor.close()
     return redirect(url_for('queue'))
 
-@app.route('/admin/queue/delete/<id>/',methods = ['GET', 'POST'])
+@app.route('/admin/queue/delete/<int:id>/',methods = ['GET', 'POST'])
 def delete_table(id):
-    print("Hello")
     cursor = mysql.connection.cursor()
     cursor.execute('''DELETE FROM `%s` WHERE `id`='%s' '''%(os.getenv('DATABASE_TABLE_CLIENT_NAME'),id))
     mysql.connection.commit()
@@ -144,8 +148,36 @@ def delete_table(id):
 @app.route('/user/camera/<int:id>')
 def user_video(id):
     return( Response(gen(id),mimetype='multipart/x-mixed-replace; boundary=frame'))
-#######################################   user   ########################################
 
+
+@app.route('/user/queue')
+def user_queue():
+    now = datetime.now()
+    today = now.strftime("%d/%m/%Y")
+    return render_template('user_queue.html',today=today)
+@app.route('/user/queue/gen', methods= ['GET'])
+def user_queue_gen():
+    now = datetime.now()
+    today = now.strftime("%Y-%m-%d 00:00:00")
+    tomorrow = (now+timedelta(days=1)).strftime("%Y-%m-%d 00:00:00")
+    cursor = mysql.connection.cursor()
+    cursor.execute('''SELECT  name, surname, queue_time,pet_name,pet_age,pet_type,camera_id FROM `%s` 
+    WHERE `queue_time` >= '%s' AND `queue_time` < '%s' AND `status`='Wait'    '''
+    %(os.getenv('DATABASE_TABLE_CLIENT_NAME'),today,tomorrow))
+    mysql.connection.commit()
+    data = cursor.fetchall()
+    data = list(data)
+    for i in range(len(data)):
+        data[i] = list(data[i])
+        data[i][2]=data[i][2].strftime("%H:%M")
+        petage = str(data[i][4]).split(":")
+        data[i][4] = petage[0] + ' years '+petage[1]+' months '
+
+    #print(data)
+    cursor.close()
+    return jsonify(data)
+    #return render_template('user_queue.html',table=data,today=now.strftime("%d/%m/%Y"))
+#######################################   user   ########################################
 
 
 if __name__=="__main__":
