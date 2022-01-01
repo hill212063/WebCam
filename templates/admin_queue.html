@@ -10,11 +10,11 @@
         <div id="toolbar">
             <div class="form-inline" role="form">
               <div class="form-group">
-                <span>From Date: </span>
+                <span style="margin-right:5px ;"> From Date: </span>
                 <input id="from_date" name="from_date" class="form-control w70" type="date" >
               </div>
               <div class="form-group" >
-                <span style="margin-left: 20px ;">To Date: </span>
+                <span style="margin-left: 20px ; margin-right:5px ;">To Date: </span>
                 <input id ="to_date" name="to_date" class="form-control w70" type="date" style="margin-right: 20px ;" >
               </div>
               <div style="margin-right:10px ;"> <button id="ok_filter" type="submit" class="btn btn-primary">OK</button></div>
@@ -68,13 +68,13 @@
             {% endfor %}
             <td>
                 <diV style="width:150px;">
-                  <a id ="print{{table[i][0]}}" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#printModal{{table[i][0]}}">
+                  <a id ="print{{table[i][0]}}" type="button" style="color: white;" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#printModal{{table[i][0]}}">
                     <i class="bi bi-printer"></i>
                   </a>
-                  <a  id ="edit{{table[i][0]}} "type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{table[i][0]}}">
+                  <a  id ="edit{{table[i][0]}} "type="button" style="color: white;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal{{table[i][0]}}">
                     Edit
                   </a>
-                  <a href="/admin/queue/delete/{{table[i][0]}}" id ="delete{{table[i][0]}}" onclick= "return confirm('Are You Sure To Delete ?')" type="button" class="btn btn-primary">
+                  <a href="{{url_for('delete_row_table',id=table[i][0])}}" id ="delete{{table[i][0]}}" onclick= "return confirm('Are You Sure To Delete ?')" type="button" class="btn btn-danger">
                     <i class="bi bi-trash"></i>
                   </a>
                 </diV>

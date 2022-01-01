@@ -275,7 +275,7 @@ def update_table():
     return redirect(url_for('queue'))
 
 @app.route('/admin/queue/delete/<int:id>/',methods = ['GET', 'POST'])
-def delete_table(id):
+def delete_row_table(id):
     if g.role !='admin' :
         return redirect(url_for('login'))
     cursor = mysql.connection.cursor()
