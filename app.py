@@ -13,6 +13,7 @@ from imutils.video import FPS
 #from wtforms.validators import InputRequired, Length,NumberRange
 #from wtforms import StringField,TextAreaField,DateField,TimeField,SubmitField,IntegerField, PasswordField
 from flask_qrcode import QRcode
+from flask_mail import Mail, Message
 #import qrcode
 #from io import BytesIO
 import os
@@ -23,11 +24,20 @@ app=Flask(__name__)
 QRcode(app)
 #cors = CORS(app, resources={r"/*": {"origins": "*"}})
 #socketio= SocketIO(app,cors_allowed_origins='*')
-num_cams = [0,1,2,3,4,5,6,7,8,9,10] #ใช้ได้จริง 2
+num_cams = [0,1,2,3,4,5,6,7,8,9,10] #ใช้ได้จริง 0,1
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
 
+########################   MAIL   ##############################  
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
+########################   MAIL   ##############################  a
 ########################   MYSQL   ##############################  
 app.config['MYSQL_HOST'] = os.getenv('DATABASE_HOST')
 app.config['MYSQL_USER'] = os.getenv('DATABASE_USER')
@@ -35,6 +45,98 @@ app.config['MYSQL_PASSWORD'] = os.getenv('DATABASE_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('DATABASE_NAME')
 mysql = MySQL(app)
 ########################   MYSQL   ##############################  
+
+
+
+@app.before_request
+def before_request():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(days=1)
+    g.user = None
+    g.role = None
+    g.cam_id = None
+
+    if 'username' in session:
+        g.user = session['username']
+    if 'role' in session:
+        g.role = session['role']
+    if 'cam_id' in session:
+        g.cam_id = session['cam_id']
+
+@app.route('/')
+def index():
+    return render_template('index.html',user = g.user, role = g.role)
+
+@app.route('/login', methods = ["GET","POST"])
+def login():
+    msg = ''
+    if ((request.method == 'POST') and ('username' in request.form) and ('password' in request.form)):
+        username = request.form['username']
+        password = request.form['password']
+        cursor = mysql.connection.cursor()
+        cursor.execute('''SELECT * FROM `%s` WHERE `username` = '%s' AND `password` = '%s' '''%(os.getenv('DATABASE_TABLE_ADMIN_NAME'),username,password))
+        account = cursor.fetchone()
+        if (not account):
+            cursor.execute('''SELECT * FROM `%s` WHERE `name` = '%s' AND `password` = '%s' AND `status`='Wait' '''%(os.getenv('DATABASE_TABLE_CLIENT_NAME'),username,password))
+            account = cursor.fetchone()
+        mysql.connect.commit()
+        cursor.close()
+        print(account)
+        if account:
+            #name and username live in the same index from diferrent table
+            session['username'] = account[1]
+            if account[-1]!='admin':
+                session['role'] = 'user'
+            else:
+                session['role'] = account[-1]
+            if session['role'] == 'admin':
+                return redirect(url_for('submit'))
+            elif session['role'] == 'user':
+                session['cam_id'] = account[10]
+                return redirect(url_for('user_camera'))
+        else:
+            msg = 'Incorrect'
+    if g.role=='admin':
+        return redirect(url_for('submit'))
+    elif g.role=='user':
+        return redirect(url_for('user_camera'))
+    return render_template('login.html', msg = msg)
+
+@app.route('/logout')
+def logout():
+    session.pop('username',None)
+    session.pop('role',None)
+    session.pop('cam_id',None)
+    return redirect(url_for('index'))
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html',user = g.user, role = g.role)
+
+@app.route('/about', methods = ["GET","POST"])
+def about():
+    if request.method == 'POST':
+        name = request.form["name"]
+        email = request.form["email"]
+        message = request.form['message']
+        msg = Message(name,sender=email, recipients=["04076@pccl.ac.th"])
+        msg.body = message + "from " + email
+        mail.send(msg)
+        flash('Success', 'success')
+        return redirect(url_for('about'))
+    return render_template('about.html',user = g.user, role = g.role)
+
+@app.route('/contactprofile')
+def contactprofile():
+    return render_template('contactprofile.html',user = g.user, role = g.role)
+
+@app.route('/contactprofile_2')
+def contactprofile_2():
+    return render_template('contactprofile_2.html',user = g.user, role = g.role)
+
+@app.route('/contactprofile_3')
+def contactprofile_3():
+    return render_template('contactprofile_3.html',user = g.user, role = g.role)
 
 def gen(id):
     vs = WebcamVideoStream(src=id).start()
@@ -46,9 +148,39 @@ def gen(id):
         yield(b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+@app.route('/queue')
+def client_queue():
+    now = datetime.now()
+    today = now.strftime("%d/%m/%Y")
+    return render_template('client_queue.html',today=today)
+
+@app.route('/queue/gen', methods= ['GET'])
+def client_queue_gen():
+    now = datetime.now()
+    today = now.strftime("%Y-%m-%d 00:00:00")
+    tomorrow = (now+timedelta(days=1)).strftime("%Y-%m-%d 00:00:00")
+    cursor = mysql.connection.cursor()
+    cursor.execute('''SELECT  name, surname, queue_time,pet_name,pet_age,pet_type,camera_id FROM `%s` 
+    WHERE `queue_time` >= '%s' AND `queue_time` < '%s' AND `status`='Wait'    '''
+    %(os.getenv('DATABASE_TABLE_CLIENT_NAME'),today,tomorrow))
+    mysql.connection.commit()
+    data = cursor.fetchall()
+    data = list(data)
+    for i in range(len(data)):
+        data[i] = list(data[i])
+        data[i][2]=data[i][2].strftime("%H:%M")
+        petage = str(data[i][4]).split(":")
+        data[i][4] = petage[0] + ' years '+petage[1]+' months '
+
+    #print(data)
+    cursor.close()
+    return jsonify(data)
+
 #######################################   ADMIN   #######################################  
 @app.route('/admin/chk_cam', methods= ['GET'])
 def check_cam_busy():
+    if g.role !='admin' :
+        return redirect(url_for('login'))
     cam={}
     for i in num_cams:
         cam[str(i)]=False
@@ -75,14 +207,18 @@ def check_cam_busy_invidual(cam_id):
 
 @app.route('/admin/cameras')
 def admin_cameras():
+    if g.role !='admin' :
+        return redirect(url_for('login'))
     return render_template('admin_cameras.html',num_cams=num_cams)
 
 @app.route('/admin/cameras/<int:id>')
 def video(id):
     return( Response(gen(id),mimetype='multipart/x-mixed-replace; boundary=frame'))
 
-@app.route('/', methods= ['GET','POST'])
+@app.route('/admin', methods= ['GET','POST'])
 def submit():
+    if g.role !='admin' :
+        return redirect(url_for('login'))
     if request.method == 'POST':
         name = request.form['name']
         surname = request.form['surname']
@@ -107,6 +243,8 @@ def submit():
 
 @app.route('/admin/queue', methods= ['GET','POST'])
 def queue():
+    if g.role !='admin' :
+        return redirect(url_for('login'))
     cursor = mysql.connection.cursor()
     cursor.execute('''SELECT  id,name, surname, queue_time,status,pet_name,pet_age,pet_type,camera_id,note FROM `%s`'''%(os.getenv('DATABASE_TABLE_CLIENT_NAME')))
     mysql.connection.commit()
@@ -117,6 +255,8 @@ def queue():
 
 @app.route('/admin/queue/update',methods = ['GET', 'POST'])
 def update_table():
+    if g.role !='admin' :
+        return redirect(url_for('login'))
     if request.method == 'POST':
         row_id=request.form['id']
         name = request.form['name']
@@ -136,6 +276,8 @@ def update_table():
 
 @app.route('/admin/queue/delete/<int:id>/',methods = ['GET', 'POST'])
 def delete_table(id):
+    if g.role !='admin' :
+        return redirect(url_for('login'))
     cursor = mysql.connection.cursor()
     cursor.execute('''DELETE FROM `%s` WHERE `id`='%s' '''%(os.getenv('DATABASE_TABLE_CLIENT_NAME'),id))
     mysql.connection.commit()
@@ -145,38 +287,21 @@ def delete_table(id):
 
 
 #######################################   user   ########################################
-@app.route('/user/camera/<int:id>')
-def user_video(id):
-    return( Response(gen(id),mimetype='multipart/x-mixed-replace; boundary=frame'))
+@app.route('/user/camera')
+def user_camera():
+    if g.role !='user' :
+        return redirect(url_for('login'))
+    return render_template('user_cam.html')
 
 
-@app.route('/user/queue')
-def user_queue():
-    now = datetime.now()
-    today = now.strftime("%d/%m/%Y")
-    return render_template('user_queue.html',today=today)
-@app.route('/user/queue/gen', methods= ['GET'])
-def user_queue_gen():
-    now = datetime.now()
-    today = now.strftime("%Y-%m-%d 00:00:00")
-    tomorrow = (now+timedelta(days=1)).strftime("%Y-%m-%d 00:00:00")
-    cursor = mysql.connection.cursor()
-    cursor.execute('''SELECT  name, surname, queue_time,pet_name,pet_age,pet_type,camera_id FROM `%s` 
-    WHERE `queue_time` >= '%s' AND `queue_time` < '%s' AND `status`='Wait'    '''
-    %(os.getenv('DATABASE_TABLE_CLIENT_NAME'),today,tomorrow))
-    mysql.connection.commit()
-    data = cursor.fetchall()
-    data = list(data)
-    for i in range(len(data)):
-        data[i] = list(data[i])
-        data[i][2]=data[i][2].strftime("%H:%M")
-        petage = str(data[i][4]).split(":")
-        data[i][4] = petage[0] + ' years '+petage[1]+' months '
+@app.route('/user/camera/cam')
+def user_video():
+    if g.role !='user' :
+        return redirect(url_for('login'))
+    cam_id = session['cam_id']
+    print(cam_id)
+    return( Response(gen(int(cam_id)),mimetype='multipart/x-mixed-replace; boundary=frame'))
 
-    #print(data)
-    cursor.close()
-    return jsonify(data)
-    #return render_template('user_queue.html',table=data,today=now.strftime("%d/%m/%Y"))
 #######################################   user   ########################################
 
 

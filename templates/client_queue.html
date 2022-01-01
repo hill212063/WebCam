@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>queue_today</title>
 </head>
-<body>
+<body> -->
+
+{% extends "layout.html" %}
+
+{% block content %}
 <div class="row justify-content-center ml-1 mr-1">
     <div class="col-md-6 text-center mb-5">
         <h2 class="heading-section">Today Queue</h2>
@@ -51,15 +55,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.19.1/bootstrap-table.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
-    $(function() {
-      $('#table').bootstrapTable()
-    })
+
     function ajaxRequest(params) {
     setInterval(()=>{
         var table = $("#queue_table tbody");
         $.ajax({
                 type: "GET",
-                url: "{{url_for('user_queue_gen')}}",
+                url: "{{url_for('client_queue_gen')}}",
                 contentType: "application/json",
                 dataType: 'json',
                 success:function(data){
@@ -78,7 +80,4 @@
 
   </script>
 
-
-</body>
-
-</html>
+{% endblock %}
