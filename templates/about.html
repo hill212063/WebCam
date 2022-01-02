@@ -1,6 +1,23 @@
 {% extends "layout.html" %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages() %}
+	{% if messages %}
+	  <script>
+		var messages = {{ messages | safe }};
+		for (var i=0; i<messages.length; i++) {
+			Swal.fire({
+      title:"Success",
+			text:  messages[i],
+      icon: 'success',
+			confirmButtonText: 'Ok',
+			})
+		}
+	  </script>
+	{% endif %}
+  {% endwith %}
+
 <section class="u-clearfix u-image u-valign-middle-lg u-section-1" id="carousel_6ea2" data-image-width="1920" data-image-height="1080" style="font-family: 'Kanit';">
   <div class="u-clearfix u-layout-wrap u-layout-wrap-1">
     <div class="u-layout">

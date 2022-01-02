@@ -1,3 +1,4 @@
+
 {% extends "admin_layout.html" %}
  
     {% block content %}
@@ -74,7 +75,7 @@
                   <a  id ="edit{{table[i][0]}} "type="button" style="color: white;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal{{table[i][0]}}">
                     Edit
                   </a>
-                  <a href="{{url_for('delete_row_table',id=table[i][0])}}" id ="delete{{table[i][0]}}" onclick= "return confirm('Are You Sure To Delete ?')" type="button" class="btn btn-danger">
+                  <a  href="{{url_for('delete_row_table',id=table[i][0])}}" id ="delete{{table[i][0]}}" onclick= "return delete_confirm(this, event);" type="button" class="btn btn-danger">
                     <i class="bi bi-trash"></i>
                   </a>
                 </diV>
@@ -177,7 +178,22 @@
 
 
     <script>
-
+        function delete_confirm(self,e){
+            e.preventDefault();
+            var urlToRedirect = e.currentTarget.getAttribute('href');
+            console.log(urlToRedirect);
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Are you sure to delete?',
+                icon: 'warning',
+                confirmButtonText: 'Yes',
+                showCancelButton: true,
+                }).then(resulte => { 
+                    if(resulte.isConfirmed) {
+                        window.location.href = urlToRedirect;
+                    }
+                });
+        }
 
         function printing(butt){
             let id_num=butt.id.replace(/[^0-9]/g,'');

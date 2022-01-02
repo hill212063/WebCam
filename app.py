@@ -24,7 +24,7 @@ app=Flask(__name__)
 QRcode(app)
 #cors = CORS(app, resources={r"/*": {"origins": "*"}})
 #socketio= SocketIO(app,cors_allowed_origins='*')
-num_cams = [0,1,2,3,4,5,6,7,8,9,10] #ใช้ได้จริง 0,1
+num_cams = [0,1] #ใช้ได้จริง 0,1
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 
@@ -50,8 +50,8 @@ mysql = MySQL(app)
 
 @app.before_request
 def before_request():
-    session.permanent = True
-    app.permanent_session_lifetime = timedelta(days=1)
+    #session.permanent = True
+    #app.permanent_session_lifetime = timedelta(days=1)
     g.user = None
     g.role = None
     g.cam_id = None
@@ -82,7 +82,7 @@ def login():
         mysql.connect.commit()
         cursor.close()
         print(account)
-        if account:
+        if account != None:
             #name and username live in the same index from diferrent table
             session['username'] = account[1]
             if account[-1]!='admin':
@@ -95,18 +95,22 @@ def login():
                 session['cam_id'] = account[10]
                 return redirect(url_for('user_camera'))
         else:
-            msg = 'Incorrect'
+            print("hello")
+            flash("Invalid username or password")
     if g.role=='admin':
         return redirect(url_for('submit'))
     elif g.role=='user':
         return redirect(url_for('user_camera'))
-    return render_template('login.html', msg = msg)
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.pop('username',None)
     session.pop('role',None)
     session.pop('cam_id',None)
+    g.user = None
+    g.role = None
+    g.cam_id = None
     return redirect(url_for('index'))
 
 @app.route('/profile')
@@ -122,7 +126,7 @@ def about():
         msg = Message(name,sender=email, recipients=["04076@pccl.ac.th"])
         msg.body = message + "from " + email
         mail.send(msg)
-        flash('Success', 'success')
+        flash('Success email has sent.')
         return redirect(url_for('about'))
     return render_template('about.html',user = g.user, role = g.role)
 
@@ -152,7 +156,7 @@ def gen(id):
 def client_queue():
     now = datetime.now()
     today = now.strftime("%d/%m/%Y")
-    return render_template('client_queue.html',today=today)
+    return render_template('client_queue.html',today=today,user = g.user, role = g.role)
 
 @app.route('/queue/gen', methods= ['GET'])
 def client_queue_gen():
@@ -172,7 +176,7 @@ def client_queue_gen():
         petage = str(data[i][4]).split(":")
         data[i][4] = petage[0] + ' years '+petage[1]+' months '
 
-    #print(data)
+    print(data)
     cursor.close()
     return jsonify(data)
 
@@ -220,6 +224,10 @@ def submit():
     if g.role !='admin' :
         return redirect(url_for('login'))
     if request.method == 'POST':
+        cam = request.form['cam_id']
+        if(check_cam_busy_invidual(cam)):
+            flash("This camera is Busy!")
+            return render_template('admin_dashboard.html',num_cams=num_cams)
         name = request.form['name']
         surname = request.form['surname']
         pwd = request.form['password']
@@ -227,10 +235,6 @@ def submit():
         pet_name = request.form['pet_name']
         pet_age = str(request.form['pet_age_year'])+':'+str(request.form['pet_age_month']) 
         pet_type = request.form['pet_type']
-        cam = request.form['cam_id']
-        if(check_cam_busy_invidual(cam)):
-            flash("This camera is Busy!!")
-            return render_template('admin_dashboard.html',num_cams=num_cams)
         note = request.form['note']
         cursor = mysql.connection.cursor()
         cursor.execute('''INSERT INTO `%s` ( `name`, `surname`, `queue_time`, `pet_name`, `pet_age`, `pet_type`,`password`,`camera_id`, `note`)

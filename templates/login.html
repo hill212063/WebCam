@@ -13,9 +13,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
-
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	</head>
 	<body>
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		  <script>
+			var messages = {{ messages | safe }};
+			for (var i=0; i<messages.length; i++) {
+				Swal.fire({
+				title: 'Error!',
+                text: messages[i],
+				icon: 'error',
+				confirmButtonText: 'Ok',
+				})
+			}
+		  </script>
+		{% endif %}
+	  {% endwith %}
+
 	<section class="ftco-section">
 		<div class="container">
 			<div class="row justify-content-center">
@@ -46,6 +62,9 @@
 		            <div class="form-group">
 		            	<button type="submit" class="form-control btn btn-primary rounded submit px-3" value="login">Log In</button>
 		            </div>
+					<div class="form-group">
+						<a type="button" class="form-control btn btn-secondary rounded submit px-3">Back to Home page</a>
+					</div>
 		            <!-- <div class="form-group d-md-flex">
 		            	<div class="w-50 text-left">
 			            	<label class="checkbox-wrap checkbox-primary mb-0">Remember Me
@@ -54,9 +73,6 @@
 										</label>
 									</div>
 		            </div> -->
-                    <div>
-                        <p style="color: red;">{{msg}}</p>
-                    </div>
 		          </form>
 		        </div>
 		      </div>
