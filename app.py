@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 from flask import Flask,render_template,Response,request,jsonify,redirect,send_file,flash, session
 from flask_session import Session
+=======
+from flask import Flask,render_template,Response,request,session,jsonify,redirect,send_file,flash
+>>>>>>> 246e9db85198d1d969c3267e027c1f8553d37bc6
 from flask_mysqldb import MySQL
 from flask.helpers import url_for
 import cv2
@@ -44,6 +48,11 @@ mysql = MySQL(app)
 
 @app.before_request
 def before_request():
+<<<<<<< HEAD
+=======
+    #session.permanent = True
+    #app.permanent_session_lifetime = timedelta(seconds=10)
+>>>>>>> 246e9db85198d1d969c3267e027c1f8553d37bc6
     if 'username' not in session:
      session['username']= None
      if 'role' not in session:
