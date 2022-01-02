@@ -44,11 +44,6 @@ mysql = MySQL(app)
 
 @app.before_request
 def before_request():
-<<<<<<< HEAD
-=======
-    #session.permanent = True
-    #app.permanent_session_lifetime = timedelta(seconds=10)
->>>>>>> 246e9db85198d1d969c3267e027c1f8553d37bc6
     if 'username' not in session:
      session['username']= None
      if 'role' not in session:
