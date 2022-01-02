@@ -1,4 +1,4 @@
-from flask import Flask,render_template,Response,request,session,g,jsonify,redirect,send_file,flash
+from flask import Flask,render_template,Response,request,session,jsonify,redirect,send_file,flash
 from flask_mysqldb import MySQL
 from flask.helpers import url_for
 #from flask_socketio import SocketIO,emit
@@ -47,25 +47,19 @@ mysql = MySQL(app)
 ########################   MYSQL   ##############################  
 
 
-
 @app.before_request
 def before_request():
     #session.permanent = True
-    #app.permanent_session_lifetime = timedelta(days=1)
-    g.user = None
-    g.role = None
-    g.cam_id = None
-
-    if 'username' in session:
-        g.user = session['username']
-    if 'role' in session:
-        g.role = session['role']
-    if 'cam_id' in session:
-        g.cam_id = session['cam_id']
-
+    #app.permanent_session_lifetime = timedelta(seconds=10)
+    if 'username' not in session:
+     session['username']= None
+     if 'role' not in session:
+        session['role']= None
+     if 'cam_id' not in session:
+        session['cam_id']= None
 @app.route('/')
 def index():
-    return render_template('index.html',user = g.user, role = g.role)
+    return render_template('index.html',user = session['username'], role = session['role'])
 
 @app.route('/login', methods = ["GET","POST"])
 def login():
@@ -97,9 +91,9 @@ def login():
         else:
             print("hello")
             flash("Invalid username or password")
-    if g.role=='admin':
+    if session['role']=='admin':
         return redirect(url_for('submit'))
-    elif g.role=='user':
+    elif session['role']=='user':
         return redirect(url_for('user_camera'))
     return render_template('login.html')
 
@@ -108,14 +102,11 @@ def logout():
     session.pop('username',None)
     session.pop('role',None)
     session.pop('cam_id',None)
-    g.user = None
-    g.role = None
-    g.cam_id = None
     return redirect(url_for('index'))
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html',user = g.user, role = g.role)
+    return render_template('profile.html',user = session['username'], role = session['role'])
 
 @app.route('/about', methods = ["GET","POST"])
 def about():
@@ -128,19 +119,19 @@ def about():
         mail.send(msg)
         flash('Success email has sent.')
         return redirect(url_for('about'))
-    return render_template('about.html',user = g.user, role = g.role)
+    return render_template('about.html',user = session['username'], role = session['role'])
 
 @app.route('/contactprofile')
 def contactprofile():
-    return render_template('contactprofile.html',user = g.user, role = g.role)
+    return render_template('contactprofile.html',user = session['username'], role = session['role'])
 
 @app.route('/contactprofile_2')
 def contactprofile_2():
-    return render_template('contactprofile_2.html',user = g.user, role = g.role)
+    return render_template('contactprofile_2.html',user = session['username'], role = session['role'])
 
 @app.route('/contactprofile_3')
 def contactprofile_3():
-    return render_template('contactprofile_3.html',user = g.user, role = g.role)
+    return render_template('contactprofile_3.html',user = session['username'], role = session['role'])
 
 def gen(id):
     vs = WebcamVideoStream(src=id).start()
@@ -156,7 +147,7 @@ def gen(id):
 def client_queue():
     now = datetime.now()
     today = now.strftime("%d/%m/%Y")
-    return render_template('client_queue.html',today=today,user = g.user, role = g.role)
+    return render_template('client_queue.html',today=today,user = session['username'], role = session['role'])
 
 @app.route('/queue/gen', methods= ['GET'])
 def client_queue_gen():
@@ -183,7 +174,7 @@ def client_queue_gen():
 #######################################   ADMIN   #######################################  
 @app.route('/admin/chk_cam', methods= ['GET'])
 def check_cam_busy():
-    if g.role !='admin' :
+    if session['role'] !='admin' :
         return redirect(url_for('login'))
     cam={}
     for i in num_cams:
@@ -211,7 +202,7 @@ def check_cam_busy_invidual(cam_id):
 
 @app.route('/admin/cameras')
 def admin_cameras():
-    if g.role !='admin' :
+    if session['role'] !='admin' :
         return redirect(url_for('login'))
     return render_template('admin_cameras.html',num_cams=num_cams)
 
@@ -221,7 +212,7 @@ def video(id):
 
 @app.route('/admin', methods= ['GET','POST'])
 def submit():
-    if g.role !='admin' :
+    if session['role'] !='admin' :
         return redirect(url_for('login'))
     if request.method == 'POST':
         cam = request.form['cam_id']
@@ -247,7 +238,7 @@ def submit():
 
 @app.route('/admin/queue', methods= ['GET','POST'])
 def queue():
-    if g.role !='admin' :
+    if session['role'] !='admin' :
         return redirect(url_for('login'))
     cursor = mysql.connection.cursor()
     cursor.execute('''SELECT  id,name, surname, queue_time,status,pet_name,pet_age,pet_type,camera_id,note FROM `%s`'''%(os.getenv('DATABASE_TABLE_CLIENT_NAME')))
@@ -259,7 +250,7 @@ def queue():
 
 @app.route('/admin/queue/update',methods = ['GET', 'POST'])
 def update_table():
-    if g.role !='admin' :
+    if session['role'] !='admin' :
         return redirect(url_for('login'))
     if request.method == 'POST':
         row_id=request.form['id']
@@ -280,7 +271,7 @@ def update_table():
 
 @app.route('/admin/queue/delete/<int:id>/',methods = ['GET', 'POST'])
 def delete_row_table(id):
-    if g.role !='admin' :
+    if session['role'] !='admin' :
         return redirect(url_for('login'))
     cursor = mysql.connection.cursor()
     cursor.execute('''DELETE FROM `%s` WHERE `id`='%s' '''%(os.getenv('DATABASE_TABLE_CLIENT_NAME'),id))
@@ -293,17 +284,17 @@ def delete_row_table(id):
 #######################################   user   ########################################
 @app.route('/user/camera')
 def user_camera():
-    if g.role !='user' :
+    if session['role'] !='user' :
         return redirect(url_for('login'))
-    return render_template('user_cam.html')
+    cam_id = session['cam_id']
+    return render_template('user_cam.html',cam_id=cam_id,user = session['username'])
 
 
 @app.route('/user/camera/cam')
 def user_video():
-    if g.role !='user' :
+    if session['role'] !='user' :
         return redirect(url_for('login'))
     cam_id = session['cam_id']
-    print(cam_id)
     return( Response(gen(int(cam_id)),mimetype='multipart/x-mixed-replace; boundary=frame'))
 
 #######################################   user   ########################################
