@@ -5649,8 +5649,14 @@ button.bg-dark:focus {
   body * {
     visibility:hidden;
   }
+  
   #printSection, #printSection * {
     visibility:visible;
+    margin: 0 !important; 
+    padding: 0 !important;
+    overflow: hidden;
+    color: #000;
+    font:32px Kanit;
   }
   #printSection {
     position:absolute;
@@ -5658,6 +5664,7 @@ button.bg-dark:focus {
     right:20px;
     top:0;
   }
+
   .container {
     width: auto;}
 

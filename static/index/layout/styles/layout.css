@@ -531,12 +531,19 @@ table a, #comments a{background-color:inherit;}
 	display: block;
   }
   
-  .dropdown-content a:hover {background-color: #f1f1f1}
+  .dropdown-content a:hover {
+	  background-color: #f1f1f1
+	}
   
   .dropdown:hover .dropdown-content {
 	display: block;
   }
   
   .dropdown:hover .dropbtn {
+	color: white;
 	background-color: #3e8e41;
+  }
+  .dropdown:hover .dropbtnadmin {
+	color: white;
+	background-color: #d5c455;
   }

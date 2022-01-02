@@ -14,6 +14,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<style>
+        body{
+            font-family: 'Kanit', sans-serif;
+        }
+    </style>
 	</head>
 	<body>
 		{% with messages = get_flashed_messages() %}
@@ -36,7 +41,7 @@
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section" style="font-family: 'Kanit';">เข้าสู่ระบบของชื่อเว็บโปรเจค</h2>
+					<h2 class="heading-section" >เข้าสู่ระบบของชื่อเว็บโปรเจค</h2>
 				</div>
 			</div>
 			<div class="row justify-content-center">
@@ -63,7 +68,7 @@
 		            	<button type="submit" class="form-control btn btn-primary rounded submit px-3" value="login">Log In</button>
 		            </div>
 					<div class="form-group">
-						<a type="button" class="form-control btn btn-secondary rounded submit px-3">Back to Home page</a>
+						<a  href="/" type="button" class="form-control btn btn-secondary rounded  px-3">Back to Home page</a>
 					</div>
 		            <!-- <div class="form-group d-md-flex">
 		            	<div class="w-50 text-left">
