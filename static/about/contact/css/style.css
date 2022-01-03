@@ -41,7 +41,7 @@ a {
 .col-form-label {
   color: #000; }
 
-.btn, .form-control, .custom-select {
+.btn-other, .form-control, .custom-select {
   height: 50px; }
 
 .custom-select:active, .custom-select:focus {
@@ -56,16 +56,16 @@ a {
   text-transform: uppercase;
   font-weight: 400; }
 
-.btn {
+.btn-other {
   border: none;
   border-radius: 14px; }
-  .btn.btn-primary {
+  .btn-other.btn-other-primary {
     background: #000;
     color: #fff;
     padding: 15px 20px; }
-  .btn:hover {
+  .btn-other:hover {
     color: rgb(29, 27, 27); }
-  .btn:active, .btn:focus {
+  .btn-other:active, .btn-other:focus {
     outline: none;
     -webkit-box-shadow: none;
     box-shadow: none; }

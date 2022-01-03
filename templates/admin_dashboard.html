@@ -78,9 +78,9 @@
 				<div class="form-group mb-4">
 					<label class="label" >Pet's age</label>
                     <input type="number" min= '0' max = '99'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " id="pet_age_year" name="pet_age_year"   required="1"/>
-                    <label class="label" >year</label>
+                    <label class="label" >years</label>
                     <input type="number" min= '0' max = '11'  style="color:#6c757d; border-width: 0.5px; border-radius: 5px; " id="pet_age_month" name="pet_age_month"  required="1"/>
-                    <label class="label" >month</label>
+                    <label class="label" >months</label>
 				</div>
 				<div class="form-group mb-4">
 					<label class="label" >Note</label>
@@ -111,13 +111,13 @@
 					<div style="place-self: center; margin: 10px;"><img id='qrcode' src="{{ qrcode('http://localhost:5000/login') }}"/></div>
 					<div style="place-self:left; margin: 10px;">
 						<label id = "label_name" class="label" ></label><br>
-						<label id = "label_surname" class="label" >Surname : </label><br>
-						<label id = "label_q_time" class="label" >Queue time : </label><br>
-						<label id = "label_pet_name" class="label" >Pet's name : </label><br>
-						<label id = "label_pet_age" class="label" >Pet's age : </label><br>
-						<label id = "label_pet_type" class="label" >Pet's type : </label><br>
-						<label id = "label_cam_id" class="label" >Camera ID : </label><br>
-						<label id = "label_note" class="label" >Note : </label><br>
+						<label id = "label_surname" class="label" ></label><br>
+						<label id = "label_q_time" class="label" > </label><br>
+						<label id = "label_pet_name" class="label" ></label><br>
+						<label id = "label_pet_type" class="label" ></label><br>
+						<label id = "label_pet_age" class="label" > </label><br>
+						<label id = "label_cam_id" class="label" > </label><br>
+						<label id = "label_note" class="label" > </label><br>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -140,8 +140,8 @@
 		$("#label_surname").text("Surname : "+data[1]["value"])
 		$("#label_q_time").text("Queue time : "+data[3]["value"].replace('T',' '))
 		$("#label_pet_name").text("Pet's name : "+data[5]["value"])
-		$("#label_pet_age").text("Pet's age : "+data[6]["value"] +" (years:months)")
-		$("#label_pet_type").text("Pet's type : "+data[7]["value"])
+		$("#label_pet_type").text("Pet's type : "+data[6]["value"])
+		$("#label_pet_age").text("Pet's age : "+data[7]["value"]+":"+data[8]["value"] +" (years:months)")
 		$("#label_cam_id").text("Camera ID : "+data[4]["value"])
 		$("#label_note").text("Note : "+data[9]["value"])
 	})

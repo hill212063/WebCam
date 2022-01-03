@@ -20,3 +20,15 @@ jQuery(window).scroll(function () {
         jQuery("#backtotop").removeClass("visible");
     }
 });
+jQuery("#contact_down").click(function () {
+    jQuery("body,html").animate({
+        scrollTop: $(document).height()
+    }, 600);
+});
+jQuery(window).scroll(function () {
+    if (jQuery(window).scrollTop() < 950) {
+        jQuery("#contact_down").addClass("visible");
+    } else {
+        jQuery("#contact_down").removeClass("visible");
+    }
+});

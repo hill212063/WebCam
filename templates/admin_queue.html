@@ -2,6 +2,21 @@
 {% extends "admin_layout.html" %}
  
     {% block content %}
+    {% with messages = get_flashed_messages() %}
+	{% if messages %}
+	  <script>
+		var messages = {{ messages | safe }};
+		for (var i=0; i<messages.length; i++) {
+			Swal.fire({
+			title:"Error!",
+			text:  messages[i],
+			icon: 'error',
+			confirmButtonText: 'Ok',
+			})
+		}
+	  </script>
+	{% endif %}
+  {% endwith %}
     <br>
     <div class="row justify-content-center ml-1 mr-1">
         <div class="col-md-6 text-center mb-5">
@@ -153,8 +168,8 @@
                                     <label class="label" >Surname : {{table[i][2]}}</label><br>
                                     <label class="label" >Queue time : {{table[i][3]}} </label><br>
                                     <label class="label" >Pet's name : {{table[i][5]}}</label><br>
-                                    <label class="label" >Pet's age : {{table[i][6]}} (years:months)</label><br>
                                     <label class="label" >Pet's type : {{table[i][7]}}</label><br>
+                                    <label class="label" >Pet's age : {{table[i][6]}} (years:months)</label><br>
                                     <label class="label" >Camera ID : {{table[i][8]}}</label><br>
                                     <label class="label" >Note : {{table[i][-1]}}</label><br>
                                 </div>
