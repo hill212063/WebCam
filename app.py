@@ -15,13 +15,14 @@ import os
 
 now = datetime.now()
 app=Flask(__name__)
+SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 QRcode(app)
 num_cams = [0,1] #ใช้ได้จริง 0,1
-SECRET_KEY = os.urandom(32)
+
 
 
 
