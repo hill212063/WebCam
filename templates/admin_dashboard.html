@@ -13,7 +13,7 @@
 			title:"Error!",
 			text:  messages[i],
 			icon: 'error',
-			confirmButtonText: 'Ok',
+			confirmButtonText: 'OK',
 			})
 		}
 	  </script>
@@ -109,16 +109,16 @@
 				</div>
 				<div id = "print_comp" class ="modal-body" style="display: grid; ">
 					<div style="place-self: center; margin: 10px;"><img id='qrcode' src="{{ qrcode('http://localhost:5000/login') }}"/></div>
-					<div style="place-self:left; margin: 10px;">
-						<label id = "label_name" class="label" ></label><br>
-						<label id = "label_surname" class="label" ></label><br>
-						<label id = "label_q_time" class="label" > </label><br>
-						<label id = "label_pet_name" class="label" ></label><br>
-						<label id = "label_pet_type" class="label" ></label><br>
-						<label id = "label_pet_age" class="label" > </label><br>
-						<label id = "label_cam_id" class="label" > </label><br>
-						<label id = "label_note" class="label" > </label><br>
-					</div>
+	
+						<label id = "label_name" class="label-breakword" ></label>
+						<label id = "label_surname" class="label-breakword" ></label>
+						<label id = "label_q_time" class="label-breakword" > </label>
+						<label id = "label_pet_name" class="label-breakword" ></label>
+						<label id = "label_pet_type" class="label-breakword" ></label>
+						<label id = "label_pet_age" class="label-breakword" > </label>
+						<label id = "label_cam_id" class="label-breakword" > </label>
+						<label id = "label_note" class="label-breakword" > </label>
+					
 				</div>
 				<div class="modal-footer">
 				<button type="submit" id ="sub_print" class="btn btn-primary">Submit & Print</button>

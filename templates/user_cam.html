@@ -12,33 +12,45 @@
     <link rel="stylesheet" href="../static/login/css/style.css">
     <title >camera</title>
 </head>
-<body>
+<body style=" font-family: 'Kanit', sans-serif;">
     <br>
     <section>
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-md-6 text-center mb-5">
-                    <h2 style=" font-family: 'Kanit', sans-serif;" class="heading-section">{{user}}'s camera</h2>
+                    <h2 style=" font-family: 'Kanit', sans-serif;" class="heading-section">{{data[0]}}'s camera</h2>
                 </div>
 			</div>
-			<div class="row justify-content-center">
+			<div class="row justify-content-center" style="margin-bottom: 20px;">
 				<div class="col-md-6 col-mb-5">
 					<div class="wrap">
-                        <div style=" font-family: 'Kanit', sans-serif; display: flex; justify-content :center;row-gap: 10px; flex-direction:row; height: 100%;">
+                        <div>
                             <div style="display: flex;
                             flex-direction: column; 
                             justify-content: center;
                             vertical-align: top;
                             text-align: center;
                             margin: 10px;">
-                            <h5 style=" font-family: 'Kanit', sans-serif;">camera id : {{cam_id}}</h5>
-                            <img  class="img-fluid" style = "display: block;
+                            {% if (data[2] == 'Completed') %}
+                            <label >camera id : {{data[6]}}</label>
+                            <div><img  class="img-fluid" style = "display: block;
                                 margin-left: auto;
                                 margin-right: auto;"
-                                src="{{ url_for('user_video',id=cam_id) }}" alt="cam{{cam_id}}" width="100%"/>
+                                src="{{ url_for('user_video',id=data[6]) }}" alt="cam{{data[6]}}" width="100%"/></div>
+                            {% endif %}
+                                <div class="data">
+                                    <br>
+                                <label >Name : {{data[0]}}</label>
+                                <label >Surname : {{data[1]}}</label>
+                                <label >Pet's name : {{data[3]}}</label>
+                                <label >Pet's type : {{data[5]}}</label>
+                                <label >Pet's age : {{data[4]}}</label>
+                        
+                                <label >Note : {{data[7]}}</label>
+                                </div>
                                 <div style="margin: 20px;">
                                     <a href="/" class="btn btn-primary">Home</a>
-                                    <a href="{{url_for('logout')}}" class="btn btn-secondary">Log Out</a>
+                                    <a href="{{url_for('logout')}}" class="btn btn-secondary">Log out</a>
                                 </div>
                             </div>
                         </div>
@@ -47,7 +59,7 @@
 		</div>
 	</section>
 
-	<script src="../static/login/js/jquery.min.js"></script>
+<script src="../static/login/js/jquery.min.js"></script>
   <script src="../static/login/js/popper.js"></script>
   <script src="../static/login/js/bootstrap.min.js"></script>
   <script src="../static/login/js/main.js"></script>

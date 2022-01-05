@@ -34,7 +34,7 @@
           {% if (user and role) %}
             {% if role == "admin" %}
               <div class="dropdown">
-                <a class="btn btn-outline-success " href="{{url_for('submit')}}" style="font-size: 20px;">Hi {{ user }}</a>
+                <a class="newbtn btn-outline-success " href="{{url_for('submit')}}" style="font-size: 20px;">Hi {{ user }}</a>
                 <div class="dropdown-content">
                   <a href="{{url_for('submit')}}">Dashboard</a>
                   <a href="{{url_for('logout')}}">Logout</a>
@@ -43,7 +43,7 @@
 
             {% elif role == "user" %}
             <div class="dropdown">
-              <a class="btn btn-outline-success" href="{{url_for('user_camera')}}" style="font-size: 20px;">Hi {{ user }}</a>
+              <a class="newbtn btn-outline-success" href="{{url_for('user_camera')}}" style="font-size: 20px;">Hi {{ user }}</a>
               <div class="dropdown-content">
                 <a href="{{url_for('user_camera')}}">Camera</a>
                 <a href="{{url_for('logout')}}">Logout</a>
@@ -52,7 +52,7 @@
             {% endif %}
           <!-- <a class="btn btn-outline-success dropdown-toggle" href="#" style="font-size: 20px;">Hi {{ user }}</a> -->
           {% else %}
-            <a class="btn btn-success " href="{{url_for('login')}}" style="font-size: 20px;">Login</a>
+            <a class="newbtn btn-outline-success " href="{{url_for('login')}}" style="font-size: 20px;">Login</a>
           {% endif %}
         </div>
       </nav>

@@ -11,7 +11,7 @@
 			title:"Error!",
 			text:  messages[i],
 			icon: 'error',
-			confirmButtonText: 'Ok',
+			confirmButtonText: 'OK',
 			})
 		}
 	  </script>
@@ -163,16 +163,14 @@
                             </div>
                             <div id = "print_comp{{table[i][0]}}" class ='modal-body' style="display: grid; ">
                                 <div style="place-self: center; margin: 10px;"><img id='qrcode' src="{{ qrcode('http://localhost:5000/login') }}"/></div>
-                                <div style="place-self:left; margin: 10px;">
-                                    <label class="label" >Name : {{table[i][1]}}</label><br>
-                                    <label class="label" >Surname : {{table[i][2]}}</label><br>
-                                    <label class="label" >Queue time : {{table[i][3]}} </label><br>
-                                    <label class="label" >Pet's name : {{table[i][5]}}</label><br>
-                                    <label class="label" >Pet's type : {{table[i][7]}}</label><br>
-                                    <label class="label" >Pet's age : {{table[i][6]}} (years:months)</label><br>
-                                    <label class="label" >Camera ID : {{table[i][8]}}</label><br>
-                                    <label class="label" >Note : {{table[i][-1]}}</label><br>
-                                </div>
+                                    <label class="label-breakword" >Name : {{table[i][1]}}</label>
+                                    <label class="label-breakword" >Surname : {{table[i][2]}}</label>
+                                    <label class="label-breakword" >Queue time : {{table[i][3]}} </label>
+                                    <label class="label-breakword" >Pet's name : {{table[i][5]}}</label>
+                                    <label class="label-breakword" >Pet's type : {{table[i][7]}}</label>
+                                    <label class="label-breakword" >Pet's age : {{table[i][6]}} (years:months)</label>
+                                    <label class="label-breakword" >Camera ID : {{table[i][8]}}</label>
+                                    <label class="label-breakword" >Note : {{table[i][-1]}}</label>
                             </div>
                             <div class="modal-footer">
                             <button id="print_button{{table[i][0]}}" onclick="printing(this)" type="button" class="btn btn-primary">Print</button>
@@ -193,6 +191,10 @@
 
 
     <script>
+        
+            //$(".form-control .search-input").append('<span class="glyphicon glyphicon-search"></span>');
+            
+
         function delete_confirm(self,e){
             e.preventDefault();
             var urlToRedirect = e.currentTarget.getAttribute('href');

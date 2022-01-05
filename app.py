@@ -10,6 +10,7 @@ from imutils.video import WebcamVideoStream
 from imutils.video import FPS
 from flask_qrcode import QRcode
 from flask_mail import Mail, Message
+from threading import Thread
 import os
 
 
@@ -43,17 +44,31 @@ app.config['MYSQL_PASSWORD'] = os.getenv('DATABASE_PASSWORD')
 app.config['MYSQL_DB'] = os.getenv('DATABASE_NAME')
 mysql = MySQL(app)
 ########################   MYSQL   ##############################  
-num_cams = [0,1] #ใช้ได้จริง 0,1
+num_cams = [0,1] #ใช้ได้จริง 0,1 เพิ่มได้
 
+#Overide the update method in WebcamVideoStream clasee
+class webcam(WebcamVideoStream):
+    def update(self):
+        while True:
+            # if the thread indicator variable is set, stop the thread
+            if self.stopped:
+                return
+            # otherwise, read the next frame from the stream
+            (self.grabbed, self.frame) = self.stream.read()
+            # custom 
+            if not self.grabbed :
+            	self.stop()
 
 @app.before_request
 def before_request():
     if 'username' not in session:
      session['username']= None
-     if 'role' not in session:
+    if 'role' not in session:
         session['role']= None
-     if 'cam_id' not in session:
+    if 'cam_id' not in session:
         session['cam_id']= None
+    if 'password' not in session:
+        session['password']=None
 
 
 # Ensure responses aren't cached
@@ -79,7 +94,7 @@ def login():
             cursor.execute('''SELECT * FROM `%s` WHERE `username` = '%s' AND `password` = '%s' '''%(os.getenv('DATABASE_TABLE_ADMIN_NAME'),username,password))
             account = cursor.fetchone()
             if (not account):
-                cursor.execute('''SELECT * FROM `%s` WHERE `name` = '%s' AND `password` = '%s' AND `status`='Wait' '''%(os.getenv('DATABASE_TABLE_CLIENT_NAME'),username,password))
+                cursor.execute('''SELECT * FROM `%s` WHERE `name` = '%s' AND `password` = '%s' '''%(os.getenv('DATABASE_TABLE_CLIENT_NAME'),username,password))
                 account = cursor.fetchone()
             mysql.connect.commit()
             cursor.close()
@@ -95,8 +110,10 @@ def login():
             else:
                 session['role'] = account[-1]
             if session['role'] == 'admin':
+                session['password'] = account[2]
                 return redirect(url_for('submit'))
             elif session['role'] == 'user':
+                session['password'] = account[9]
                 session['cam_id'] = account[10]
                 return redirect(url_for('user_camera'))
         else:
@@ -126,7 +143,7 @@ def about():
         email = request.form["email"]
         message = request.form['message']
         msg = Message(name,sender=email, recipients=[os.getenv("MAIL_USERNAME")])
-        msg.body = message + "from " + email
+        msg.body = message + "\nfrom " + email
         mail.send(msg)
         flash('Success email has sent.')
         return redirect(url_for('about'))
@@ -145,7 +162,7 @@ def contactprofile_3():
     return render_template('contactprofile_3.html',user = session['username'], role = session['role'])
 
 def gen(id):
-    vs = WebcamVideoStream(src=id).start()
+    vs = webcam(src=id).start()
     while True:
         frame = vs.read()
         frame = imutils.resize(frame, width=500)
@@ -319,8 +336,20 @@ def delete_row_table(id):
 def user_camera():
     if session['role'] !='user' :
         return redirect(url_for('login'))
-    cam_id = session['cam_id']
-    return render_template('user_cam.html',cam_id=cam_id,user = session['username'])
+    data=[]
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('''SELECT name,surname,status,pet_name,pet_age,pet_type,camera_id,note FROM `%s` WHERE `name`='%s' AND `password`='%s' '''
+        %(os.getenv('DATABASE_TABLE_CLIENT_NAME'),session['username'],session['password']))
+        mysql.connection.commit()
+        data = cursor.fetchone()
+        cursor.close()
+        data = list(data)
+        petage = str(data[4]).split(":")
+        data[4] = petage[0] + ' years '+petage[1]+' months '
+    except:
+        flash("Can't connect to database.")
+    return render_template('user_cam.html',data=data)
 
 
 @app.route('/user/camera/<int:id>')

@@ -11,7 +11,7 @@
       title:"Success",
 			text:  messages[i],
       icon: 'success',
-			confirmButtonText: 'Ok',
+			confirmButtonText: 'OK',
 			})
 		}
 	  </script>
@@ -27,7 +27,7 @@
             <h1 class="u-custom-font u-text u-text-palette-2-base u-text-1">Clinic</h1>
             <h1 class="u-text u-text-palette-4-base u-text-2"> for Animals</h1>
             <p class="u-text u-text-body-color u-text-3">As your local pet health expert, we hope that your family will rely on our team as your welcoming, skilled, and compassionate partner in care.</p>
-            <a href="#contact_down" id="contact_down" class="u-btn u-btn-round u-button-style u-palette-2-base u-radius-50 u-btn-1">contact us</a>
+            <a href="#contact_down" id="contact_down" class="newbtn u-btn u-btn-round u-button-style u-palette-2-base u-btn-1">contact us</a>
           </div>
         </div>
         <div class="u-container-style u-image u-layout-cell u-right-cell u-size-32 u-image-1">
@@ -63,29 +63,14 @@
                 <div class="col-md-12">
                   
                   <h3 class="thin-heading mb-4">Message Us</h3>
-                  {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                      <ul class=flashes>
-                        {% for category, message in messages %}
-                          <!-- <li class="{{ category }}"> {{ message }}</li> -->
-                          <script type="text/javascript">
-                            swal({
-                              title: "{{ message }}",
-                              text: "Thank you for contact us.",
-                              icon: "{{ category }}",
-                            });
-                          </script>
-                        {% endfor %}
-                      </ul>
-                    {% endif %}
-                  {% endwith %}
+      
                   <form class="mb-5" method="post" id="contactForm" name="contactForm" action="{{url_for('about')}}" >
                     <div class="row">
                       <div class="col-md-6 form-group">
                         <input type="text" class="form-control" name="name" id="name" placeholder="Your name" required >
                       </div>
                       <div class="col-md-6 form-group">
-                        <input type="text" class="form-control" name="email" id="email" placeholder="Email" required>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
                       </div>
                     </div>
                     <div class="row">
@@ -95,7 +80,7 @@
                     </div>  
                     <div class="row">
                       <div class="col-12">
-                        <input type="submit" value="Send Message" class="btn btn-primary rounded-0 py-2 px-4">
+                        <input type="submit" value="Send Message" class="newbtn py-2 px-4 u-btn-round u-button-style u-palette-2-base">
                       <span class="submitting"></span>
                       </div>
                     </div>
