@@ -1,0 +1,61 @@
+{% extends "layout.html" %} {% block content %} {% with messages =
+get_flashed_messages() %} {% if messages %}
+<script>
+  var messages = {{ messages | safe }};
+  for (var i=0; i<messages.length; i++) {
+      Swal.fire({
+      title:"Error!",
+      text:  messages[i],
+      icon: 'error',
+      confirmButtonText: 'OK',
+      })
+  }
+</script>
+{% endif %} {% endwith %}
+<div
+  style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  "
+>
+  <div
+    style="
+      margin: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    "
+    class="container"
+  >
+    <div style="max-width: 1108px; max-height: 623.25px">
+      <img
+        src="{{'../static/imgs_news/'+table[0][4]}} "
+        class="img-fluid"
+        style="
+          max-width: 1108px;
+          max-height: 623.25px;
+          margin-left: auto;
+          margin-right: auto;
+        "
+        alt="News image"
+      />
+    </div>
+
+    <div style="margin: 10px; width: 60%">
+      <hr />
+      <h2 style="word-break: break-word">{{table[0][0]}}</h2>
+      <hr />
+      <div style="display: inline-flex; color: #626262">
+        <p style="margin-right: 20px">Posted time : {{table[0][2]}}</p>
+        <p style="margin-right: 20px">Modified time : {{table[0][3]}}</p>
+        <p>Type : {{table[0][5]}}</p>
+      </div>
+      <br />
+      {{table[0][1]| safe}}
+    </div>
+  </div>
+</div>
+{% endblock %}

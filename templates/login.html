@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Login</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <link rel="stylesheet" href="../static/login/css/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit&display=swap"
+      rel="stylesheet"
+    />
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      body {
+        font-family: "Kanit";
+      }
+    </style>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <script>
+      var messages = {{ messages | safe }};
+      for (var i=0; i<messages.length; i++) {
+      	Swal.fire({
+      	title: 'Error!',
+        text: messages[i],
+      	icon: 'error',
+      	confirmButtonText: 'OK',
+      	})
+      }
+    </script>
+    {% endif %} {% endwith %}
+
+    <section class="ftco-section">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6 text-center mb-5">
+            <h2 class="heading-section" style="font-family: 'Kanit'">
+              เข้าสู่ระบบของชื่อเว็บโปรเจค
+            </h2>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12 col-lg-10">
+            <div class="wrap d-md-flex">
+              <div
+                class="img"
+                style="background-image: url(../static/images/bg-2.jpg)"
+              ></div>
+              <div class="login-wrap p-4 p-md-5">
+                <div class="d-flex">
+                  <div class="w-100">
+                    <h3 class="mb-4" style="font-family: Kanit">Log In</h3>
+                  </div>
+                </div>
+                <form
+                  action="{{url_for('login')}}"
+                  method="POST"
+                  class="signin-form"
+                >
+                  <div class="form-group mb-3">
+                    <label class="label" for="name">Username</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Username"
+                      name="username"
+                      required
+                    />
+                  </div>
+                  <div class="form-group mb-3">
+                    <label class="label" for="password">Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      placeholder="Password"
+                      name="password"
+                      required
+                    />
+                  </div>
+                  <p class="bottom">
+                    Don't have an account?
+                    <a class="bottom" href="{{url_for('register')}}">
+                      Sign up here</a
+                    >
+                  </p>
+                  <div class="form-group">
+                    <button
+                      type="submit"
+                      class="form-control btn btn-primary submit px-3"
+                      style="border-radius: 40px"
+                      value="login"
+                    >
+                      Log In
+                    </button>
+                  </div>
+                  <div class="form-group">
+                    <a
+                      href="/"
+                      type="button"
+                      class="form-control btn btn-secondary px-3"
+                      style="border-radius: 40px"
+                      >Back to Home page</a
+                    >
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="../static/login/js/jquery.min.js"></script>
+    <script src="../static/login/js/popper.js"></script>
+    <script src="../static/login/js/bootstrap.min.js"></script>
+    <script src="../static/login/js/main.js"></script>
+    <script type="text/javascript">
+      (function () {
+        window["__CF$cv$params"] = {
+          r: "6dc6440629334b8e",
+          m: "mHja6QsEd_v5OJZjPdDO_.mrAmSdgwAXg1mFE2efoC4-1644673613-0-ATwGspi8c5IjIxJ72LzAW3vfLkZSMd2P/DGQLmkPpsEcoJTc5B0KgIGfbPjLcjYh4GybPwL4L0WPWrvAMGxICueifu+lCEPm/dvMzfYgSTgSFo50BPB53p1zQkC6tVETANTKU3sgbjUdAfOCKjKg0kmHCheyJPsQJQax+sMBSPhuMGIycIHVugGjPHOUlBpulg==",
+          s: [0xaa6b31fa2d, 0x1626531d88],
+        };
+      })();
+    </script>
+  </body>
+</html>

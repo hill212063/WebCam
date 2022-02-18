@@ -1,0 +1,93 @@
+{% extends "user_layout.html" %}
+ 
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <script>
+    var messages = {{ messages | safe }};
+    for (var i=0; i<messages.length; i++) {
+        Swal.fire({
+        title:"Error!",
+        text:  messages[i],
+        icon: 'error',
+        confirmButtonText: 'OK',
+        })
+    }
+  </script>
+{% endif %}
+{% endwith %}
+
+<br>
+<div class="row justify-content-center ml-4 mr-4" >
+    <div style="max-width: 1000px">
+        <div
+          style="
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 25px auto;
+          "
+        >
+        <h2 class="heading-section">Cases</h2>
+    </div>
+
+
+<table class='table' style="color: #6c757d; word-break: break-word;" id ='table' 
+data-toggle="table"
+data-search="true"
+data-filter-control="true" 
+data-show-export="true"
+data-click-to-select="true"
+data-pagination="true"
+data-toolbar="#toolbar"
+data-detail-view="true"
+data-detail-view-by-click="false"
+data-detail-view-icon="true"
+data-detail-formatter="detailFormatter"
+data-auto-refresh="true"
+>
+
+    <thead>
+    <tr>
+        
+        <th  data-sortable="true" >Subject</th>
+        <th  data-sortable="true" >Pet's name</th>
+        <th data-sortable="true" data-width="200"  >Queue</th>
+        <th data-sortable="true"data-width="100" >Status</th>
+        <th  data-sortable="true" data-width="100">Camera ID</th>
+        <th data-visible="false">Note</th>
+        
+      
+    </tr>
+    </thead>
+    <tbody>
+        
+        {% for i in range(table|length) %}
+        <tr>
+        {% for j in range(table[i]|length) %}
+      
+        <td >{{table[i][j]}}</td>
+    
+        {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+<script>
+     $(function() {
+        $('#table').bootstrapTable()
+    })
+     function detailFormatter(index, row) {
+        var html = []
+        html.push('<p><b>' +"Note" + ':</b> ' + row[5] + '</p>')
+        return html.join('')
+    }
+</script>
+
+
+
+{% endblock %}

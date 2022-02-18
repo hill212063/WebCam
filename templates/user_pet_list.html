@@ -1,0 +1,67 @@
+{% extends "user_layout.html" %} {% block content %} {% with messages =
+get_flashed_messages() %} {% if messages %}
+<script>
+  var messages = {{ messages | safe }};
+  for (var i=0; i<messages.length; i++) {
+      Swal.fire({
+      title:"Error!",
+      text:  messages[i],
+      icon: 'error',
+      confirmButtonText: 'OK',
+      })
+  }
+</script>
+{% endif %} {% endwith %}
+
+<br />
+<div class="row justify-content-center ml-4 mr-4">
+  <div style="max-width: 1000px">
+    <div
+      style="
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 25px auto;
+      "
+    >
+      <h2 class="heading-section">Pets</h2>
+    </div>
+
+    <table
+      class="table"
+      style="color: #6c757d; word-break: break-word"
+      id="table"
+      data-toggle="table"
+      data-search="true"
+      data-filter-control="true"
+      data-show-export="true"
+      data-click-to-select="true"
+      data-pagination="true"
+      data-toolbar="#toolbar"
+    >
+      <thead>
+        <tr>
+          <th data-sortable="true">Pet's name</th>
+          <th data-sortable="true" data-width="200">Pet's age</th>
+          <th data-sortable="true" data-width="200">Pet's type</th>
+
+          <th data-sortable="true" data-width="200">Registration time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in range(table|length) %}
+        <tr>
+          {% for j in range(table[i]|length) %}
+
+          <td>{{table[i][j]}}</td>
+
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "user_layout.html" %} {% block content %} {% with messages =
+get_flashed_messages() %} {% if messages %}
+<script>
+  var messages = {{ messages | safe }};
+  for (var i=0; i<messages.length; i++) {
+      Swal.fire({
+      title:"Error!",
+      text:  messages[i],
+      icon: 'error',
+      confirmButtonText: 'OK',
+      })
+  }
+</script>
+{% endif %} {% endwith %}
+<link href="../static/user/user_cam.css" rel="stylesheet" type="text/css" />
+<div style="display: flex; justify-content: center; width: 100%">
+  <div class="tabinator">
+    {% for i in range( data | length) %} {% if (i ==0) %}
+    <input type="radio" id="tab{{i+1}}" name="tabs" checked />
+    {% else %}
+    <input type="radio" id="tab{{i+1}}" name="tabs" />
+    {% endif %}
+    <label for="tab{{i+1}}">Tab{{i+1}}</label>
+    {% endfor %} {% for i in range( data | length) %}
+    <div id="content{{i+1}}">
+      <h2>Camera ID : {{data[i][5]}}</h2>
+
+      {% if (data[i][5] != None) %}
+      <img
+        class="img-fluid"
+        style="display: block; margin-left: auto; margin-right: auto"
+        src="{{ url_for('user_video',id=data[i][5]) }}"
+        alt="cam{{data[i][5]}}"
+        width="100%"
+      />
+      {% else %}
+      <img
+        class="img-fluid"
+        style="display: block; margin-left: auto; margin-right: auto"
+        src="../static/images/blank_cam.png"
+        alt="no_camera"
+        width="100%"
+      />
+      {% endif %}
+
+      <p>Subject : {{data[i][1]}}</p>
+      <p>Pet's name : {{data[i][2]}}</p>
+      <p>Queue time : {{data[i][3]}}</p>
+      <p>Note : {{data[i][4]}}</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

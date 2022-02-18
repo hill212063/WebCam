@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <title>ชื่อเว็บโปรเจค</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link
+      href="../static/index/layout/styles/layout.css"
+      rel="stylesheet"
+      type="text/css"
+      media="all"
+    />
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- contact -->
+    <link
+      rel="stylesheet"
+      href="../static/about/contact/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="../static/about/contact/css/style.css" />
+    <link rel="stylesheet" href="../static/about/nicepage.css" media="screen" />
+    <link rel="stylesheet" href="../static/about/Home.css" media="screen" />
+
+    <!-- Profile -->
+    <link rel="stylesheet" href="../static/profile/profile.css" />
+    <link
+      rel="stylesheet"
+      href="../static/about/contact/css/owl.carousel.min.css"
+    />
+  </head>
+  <body style="font-family: 'Kanit'; background-color: #f8f9fd">
+    <nav class="navbar navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="{{url_for('index')}}">
+          <img
+            src="../static/images/catlogo.png"
+            alt=""
+            style="width: 30px; height: 24px"
+            class="d-inline-block align-text-top"
+          />
+          <span style="font-size: 25px">ชื่อเว็บโปรเจค</span>
+        </a>
+        {% if (user and role) %} {% if role == "admin" %}
+        <div class="dropdown">
+          <a
+            class="newbtn btn-outline-success"
+            href="{{url_for('submit')}}"
+            style="font-size: 20px"
+            >Hi admin</a
+          >
+          <div class="dropdown-content">
+            <a href="{{url_for('submit')}}">Dashboard</a>
+            <a href="{{url_for('logout')}}">Logout</a>
+          </div>
+        </div>
+        {% elif role == "officer" %}
+        <div class="dropdown">
+          <a
+            class="newbtn btn-outline-success"
+            href="{{url_for('pet_table')}}"
+            style="font-size: 20px"
+            >Hi officer</a
+          >
+          <div class="dropdown-content">
+            <a href="{{url_for('pet_table')}}">Dashboard</a>
+            <a href="{{url_for('logout')}}">Logout</a>
+          </div>
+        </div>
+        {% elif role == "user" %}
+        <div class="dropdown">
+          <a
+            class="newbtn btn-outline-success"
+            href="{{url_for('user_case_list')}}"
+            style="font-size: 20px"
+            >Hi {{ user }}</a
+          >
+          <div class="dropdown-content">
+            <a href="{{url_for('user_case_list')}}">Dashboard</a>
+            <a href="{{url_for('logout')}}">Logout</a>
+          </div>
+        </div>
+        {% endif %} {% else %}
+        <a
+          class="newbtn btn-outline-success"
+          href="{{url_for('login')}}"
+          style="font-size: 20px"
+          >Login</a
+        >
+        {% endif %}
+      </div>
+    </nav>
+    {% block content %} {% endblock %}
+
+    <a id="backtotop" href="#top"><i class="fas fa-chevron-up"></i></a>
+    <div class="wrapper row5">
+      <div id="copyright" class="hoc clear">
+        <!-- ################################################################################################ -->
+        <p class="fl_left">Copyright &copy; 2022 - All Rights Reserved -</p>
+        <!-- ################################################################################################ -->
+      </div>
+    </div>
+    <!-- JAVASCRIPTS -->
+    <!-- <script src="../static/index/layout/scripts/jquery.min.js"></script> -->
+    <script src="../static/index/layout/scripts/jquery.backtotop.js"></script>
+    <script src="../static/index/layout/scripts/jquery.mobilemenu.js"></script>
+    <!-- <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script> -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- contact -->
+    <script src="../static/about/contact/js/jquery.validate.min.js"></script>
+    <script
+      class="u-script"
+      type="text/javascript"
+      src="../static/about/jquery.js"
+      defer=""
+    ></script>
+  </body>
+</html>

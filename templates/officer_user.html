@@ -1,0 +1,152 @@
+
+{% extends "officer_layout.html" %}
+ 
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <script>
+    var messages = {{ messages | safe }};
+    for (var i=0; i<messages.length; i++) {
+        Swal.fire({
+        title:"Error!",
+        text:  messages[i],
+        icon: 'error',
+        confirmButtonText: 'OK',
+        })
+    }
+  </script>
+{% endif %}
+{% endwith %}
+<br>
+<div class="row justify-content-center ml-1 mr-1">
+    <div class="col-md-6 text-center mb-5">
+        <h2 class="heading-section">Users</h2>
+    </div>
+
+
+<table class='table' style="color: #6c757d; word-break: break-word;" id ='table' 
+data-toggle="table"
+data-search="true"
+data-filter-control="true" 
+data-show-export="true"
+data-click-to-select="true"
+data-pagination="true"
+data-auto-refresh="true"
+>
+
+    <thead>
+    <tr>
+        
+        <th  data-sortable="true" >Username</th>
+        <th  data-sortable="true" >Password</th>
+        <th data-sortable="true" >Name</th>
+        <th data-sortable="true" >Surname</th>
+        <th  data-sortable="true" >Email</th>
+        <th data-sortable="true" >Tel</th>
+        <th data-width="100" >Actions</th>
+        
+      
+    </tr>
+    </thead>
+    <tbody>
+        
+        {% for i in range(table|length) %}
+        <tr>
+        {% for j in range(table[i]|length) %}
+        {% if j!=0 %}
+        <td >{{table[i][j]}}</td>
+        {% endif %}
+        {% endfor %}
+        <td>
+            <diV style="width:150px;">
+              <a  id ="edit{{table[i][0]}} "type="button" style="color: white;" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal{{table[i][0]}}">
+                Edit
+              </a>
+              <a  href="{{url_for('delete_row_user',id=table[i][0])}}" id ="delete{{table[i][0]}}" onclick= "return delete_confirm(this, event);" type="button" class="btn btn-danger">
+                <i class="bi bi-trash"></i>
+              </a>
+            </diV>
+
+
+              <!--Edit  Modal -->
+                <div class="modal fade" id="editModal{{table[i][0]}}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true" >
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">    
+                            <form action="{{url_for('update_user')}}" class="signup-form"  style="color: #6c757d;" method='post' enctype="multipart/form-data" >
+                                <input type="hidden"  name="id" value="{{table[i][0]}}" />
+                                <div class="form-group mb-4">
+                                    <label class="label">Username</label>
+                                    <input name="username" maxlength="20" class="form-control" value="{{table[i][1]}}" required="1"/>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="label" >Password</label>
+                                    <input name="password"  maxlength="50" class="form-control" value="{{table[i][2]}}" required="1"/>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="label" >Name</label>
+                                    <input name="name" maxlength="50" class="form-control" value="{{table[i][3]}}" required="1"/>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="label" >Surname</label>
+                                    <input  name="surname" maxlength="50" class="form-control" value="{{table[i][4]}}" required="1"/>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="label" >Email</label>
+                                    <input name="email" maxlength="100" class="form-control" value="{{table[i][5]}}" required="1"/>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label class="label" >Tel</label>
+                                    <input name="tel" maxlength="10" class="form-control" value="{{table[i][6]}}" required="1"/>
+                                </div>
+                                <div >
+                                    <button type ='submit' class="btn btn-primary" >Save changes</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                               
+                            </form>        
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+
+
+<script>
+    
+        //$(".form-control .search-input").append('<span class="glyphicon glyphicon-search"></span>');
+        
+
+    function delete_confirm(self,e){
+        e.preventDefault();
+        var urlToRedirect = e.currentTarget.getAttribute('href');
+        console.log(urlToRedirect);
+        Swal.fire({
+            title: 'Warning!',
+            text: 'Are you sure to delete?',
+            icon: 'warning',
+            confirmButtonText: 'Yes',
+            showCancelButton: true,
+            }).then(resulte => { 
+                if(resulte.isConfirmed) {
+                    window.location.href = urlToRedirect;
+                }
+            });
+    }
+
+    $(function() {
+        $('#table').bootstrapTable()
+    })
+  </script>
+{% endblock %}

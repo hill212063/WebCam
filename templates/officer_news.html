@@ -1,0 +1,205 @@
+{% extends "officer_layout.html" %}
+ 
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <script>
+    var messages = {{ messages | safe }};
+    for (var i=0; i<messages.length; i++) {
+        Swal.fire({
+        title:"Error!",
+        text:  messages[i],
+        icon: 'error',
+        confirmButtonText: 'OK',
+        })
+    }
+  </script>
+{% endif %}
+{% endwith %}
+<style>
+    .ck-editor__editable_inline {
+    min-height: 150px;
+  }
+</style>
+<br>
+
+<div class="row justify-content-center ml-1 mr-1">
+    <div style="max-width: 1500px">
+        <div
+          style="
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 25px auto;
+          "
+        >
+        <h2 class="heading-section">News</h2>
+    </div>
+
+    <div id="toolbar">
+        <div class="form-inline" role="form">
+          <div class="form-group">
+            <span style="margin-right:5px ;"> Created from Date: </span>
+            <input id="from_date" name="from_date" class="form-control w70" type="date" >
+          </div>
+          <div class="form-group" >
+            <span style="margin-left: 20px ; margin-right:5px ;">To Date: </span>
+            <input id ="to_date" name="to_date" class="form-control w70" type="date" style="margin-right: 20px ;" >
+          </div>
+          <div style="margin-right:10px ;"> <button id="ok_filter" type="button" class="btn btn-primary">OK</button></div>
+          <div style="margin-right:10px ;"> <button id="clear_filter" type="button" class="btn btn-secondary">Clear</button></div>
+          <div ><a class="btn btn-warning" href="{{url_for('news_create_page')}}" target="_blank" type="button">Adding news </a></div>
+        </div>
+      </div>
+
+<table class='table' style="color: #6c757d; word-break: break-word;" id ='table' 
+data-toggle="table"
+data-search="true"
+data-filter-control="true" 
+data-show-export="true"
+data-click-to-select="true"
+data-pagination="true"
+data-toolbar="#toolbar"
+data-auto-refresh="true"
+>
+
+    <thead>
+    <tr>
+        
+        <th data-width="600" data-sortable="true" >Subject</th>
+        <th data-width="800"data-sortable="true" >Detail</th>
+        <th data-width="200" data-sortable="true" data-field='queue_head'>Created Time</th>
+        <th data-width="200" data-sortable="true" >Modified Time</th>
+        <th data-width="100"data-sortable="true" >Type</th>
+        <th data-width="100">Actions</th>
+        
+      
+    </tr>
+    </thead>
+    <tbody>
+        
+        {% for i in range(table|length) %}
+        <tr>
+        {% for j in range(table[i]|length) %}
+        {% if j not in [0,1,2,5] %}
+        <td style="vertical-align: middle;">{{table[i][j]}}</td>
+        {% elif j == 1 %}
+        <td>
+            <div style="display: inline-flex; width: 100%; min-width: 250px; justify-content: center;align-items: center;">
+            <div style="min-width: 170px; height: 95.625px;"><img src= "{{'../static/imgs_news/'+table[i][5]}}" 
+            style="max-width: 170px;
+                max-height: 95.625px; 
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                padding-top:8px;
+                ">
+            </div>
+            <div style="margin-left: 10px; width: 100%;"><a href ="{{url_for('news_gen',id=table[i][0])}}"target="_blank">{{table[i][j]}}</a></div>
+            </div>
+        </td>
+        {% elif j==2%}
+            {% if table[i][j]|length>=80 %}
+                <td style="min-width: 300px; vertical-align: middle;">{{(table[i][j]|striptags)[0:80]}}...</td>
+            {% else %}
+                <td style="min-width: 300px; vertical-align: middle;">{{table[i][j]|striptags}}</td>
+            {% endif %}
+        {% endif %}
+        {% endfor %}
+        <td>
+            <diV style="width:100px;">
+              <a  href="{{url_for('news_edit_page',id=table[i][0])}}"type="button" style="color: white;" class="btn btn-success" target="_blank">
+                Edit
+              </a>
+              <a  href="{{url_for('delete_row_news',id=table[i][0])}}" id ="delete{{table[i][0]}}" onclick= "return delete_confirm(this, event);" type="button" class="btn btn-danger">
+                <i class="bi bi-trash"></i>
+              </a>
+            </diV>
+
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+<script>
+    
+    function delete_confirm(self,e){
+        e.preventDefault();
+        var urlToRedirect = e.currentTarget.getAttribute('href');
+        Swal.fire({
+            title: 'Warning!',
+            text: 'Are you sure to delete?',
+            icon: 'warning',
+            confirmButtonText: 'Yes',
+            showCancelButton: true,
+            }).then(resulte => { 
+                if(resulte.isConfirmed) {
+                    window.location.href = urlToRedirect;
+                }
+            });
+    }
+    $(function() {
+        $('#table').bootstrapTable()
+    })
+    function getDates(startDate, stopDate) {
+        var datetimeArray = [];
+        var dateArray = [];
+        var date_interval=[];
+        {% for i in range(table|length) %}
+            datetimeArray.push('{{table[i][3]}}');
+            dateArray.push("{{table[i][3].strftime('%Y-%m-%d')}}");
+        {% endfor %}
+        if(!startDate && !stopDate){
+            return null  ;
+        }
+
+        for(let i =0;i<dateArray.length;i++){
+            let date_check = new Date(dateArray[i])
+            let stadate= new Date(startDate)
+            let stodate= new Date(stopDate)
+           
+            if(date_check>=stadate && date_check<= stodate ){
+                date_interval.push(datetimeArray[i]);
+            }else if(date_check>=stadate && !(stopDate)){
+                date_interval.push(datetimeArray[i]);
+            }else if(date_check<= stodate && !(startDate)){
+                date_interval.push(datetimeArray[i]);
+            }
+        }
+        return date_interval;
+    }
+
+
+
+    $('#ok_filter').click(function() {
+
+    var $table = $('#table')
+    var from = $("input[type=date][name=from_date]").val();
+    var to = $("input[type=date][name=to_date]").val();
+    if(getDates(from, to)!=null)
+    {$table.bootstrapTable('filterBy', {
+        queue_head: getDates(from, to)
+    })}
+    })
+
+    $('#clear_filter').click(function() {
+        //console.log(getDates(from, to))
+        var $table = $('#table')
+        $('#from_date').val('')
+        $('#to_date').val('')
+        
+        $table.bootstrapTable('filterBy', {
+            queue_head: getDates(null,null)
+        })
+        location.reload();
+
+    })
+
+  </script>
+{% endblock %}

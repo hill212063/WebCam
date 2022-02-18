@@ -1,0 +1,126 @@
+
+{% extends "layout.html" %}
+
+{% block content %}
+<style>
+  .carousel-content
+  {
+    height:32rem; 
+    width: auto;
+    position: relative;
+    background-color: #777;
+  }
+  .carousel-container{
+    color: #ffffff;
+    position: absolute;
+    bottom:0;
+    left: 0;
+    right: 0;
+    padding-bottom: 50px;
+    padding-left:50px;
+    padding-right:50px;
+    max-width: 1000px;
+    word-break: break-word;
+  }
+  .overlay-image{
+    position: absolute;
+    bottom:0;
+    left: 0;
+    right: 0;
+    top:0;
+    background-repeat: no-repeat;
+    background-size: 100% 32rem;
+    opacity: 0.55; 
+  }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<div style="display:flex; flex-direction: column; justify-content:center; align-items: center; width: 100%;">
+<div> 
+  <br>
+  <h1 style="text-align: center;">ยินดีต้อนรับสู่ชื่อเว็บโปรเจค</h1>
+  <br>
+</div>
+
+<div class="owl-carousel owl-theme" style="max-width: 1700px; height:32rem;">
+  <div  class = "carousel-content">
+    <div class="overlay-image" style="background-image: url(../static/images/cat01.jpg);" ></div>
+    <div class="carousel-container">
+      <h1 style="color: #c3c8f5;">Example headline</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas velit justo, facilisis quis mi a, commodo finibus elit. Sed gravida erat est, et ornare neque semper non. Nulla commodo ex nunc, nec eleifend velit dictum vel. Morbi maximus blandit mi, eu suscipit neque</p>
+      <a href="{{url_for('register')}}" class="newbtn btn-success" target="_blank">Sign up now</a>
+    </div>  
+    </div>
+  <div  class = "carousel-content">
+    <div class="overlay-image" style="background-image: url(../static/images/cat02.jpg);" ></div>
+    <div class="carousel-container">
+      <h1 style="color: #c3c8f5;">Example headline</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas velit justo, facilisis quis mi a, commodo finibus elit. Sed gravida erat est, et ornare neque semper non. Nulla commodo ex nunc, nec eleifend velit dictum vel. Morbi maximus blandit mi, eu suscipit neque</p>
+      <a href="{{url_for('register')}}" class="newbtn btn-success" target="_blank">Sign up now</a>
+    </div>
+    </div>
+  <div  class = "carousel-content">
+    <div class="overlay-image" style="background-image: url(../static/images/cat03.jpg);" ></div>
+    <div class="carousel-container">
+      <h1 style="color: #c3c8f5;">Example headline</h1>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas velit justo, facilisis quis mi a, commodo finibus elit. Sed gravida erat est, et ornare neque semper non. Nulla commodo ex nunc, nec eleifend velit dictum vel. Morbi maximus blandit mi, eu suscipit neque</p>
+      <a href="{{url_for('register')}}" class="newbtn btn-success" target="_blank" >Sign up now</a>
+    </div>  
+    </div>
+</div>
+<div class="wrapper row3" style=" background-color: #f8f9fd; margin-top: 50px;">
+<main class="hoc container clear"> 
+  <!-- main body -->
+  <!-- ################################################################################################ -->
+  <section id="services">
+    <ul class="nospace group">
+      <li class="one_third">
+        <article style="border-radius:25px ;">
+          <i class="fas fa-user-md fa-4x"></i>
+          <h6 class="heading">ประวัติคุณหมอ</h6>
+          <footer><a class="newbtn" href="{{url_for('profile')}}">See Details</a></footer>
+        </article>
+      </li>
+      <li class="one_third">
+        <article style="border-radius:25px ;">
+          <i class="fas fa-newspaper fa-4x"></i>
+          <h6 class="heading">ข่าวสารต่างๆ</h6>
+          <footer><a class="newbtn" href="{{url_for('client_news')}}">See Details</a></footer>
+        </article>
+      </li>
+      <li class="one_third">
+        <article style="border-radius:25px ;">
+          <i class="fas fa-hospital fa-4x"></i>
+          <h6 class="heading">เกี่ยวกับเรา</h6>
+          <footer><a class="newbtn" href="{{url_for('about')}}">See Details</a></footer>
+        </article>
+      </li>
+    </ul>
+  </section>
+  <div class="clear"></div>
+</main>
+</div>
+  </footer>
+</div>
+<script>
+
+  jQuery(function($){ $('.owl-carousel').owlCarousel({
+          loop:true,
+          autoplay: true,
+          autowidth:true,
+          margin:0,
+          responsiveClass:true,
+          items:1,
+          dots:true,
+          nav: false,
+          // navText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+  });});
+
+</script>
+<!-- ################################################################################################ -->
+</div>
+
+{% endblock %}

@@ -1,0 +1,90 @@
+/* Base Styles */
+html,
+body {
+  margin: 0;
+  background: #f8f9fd;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Kanit&display=swap");
+
+.tabinator {
+  background: #f8f9fd;
+  padding: 40px;
+  font-family: "Kanit";
+}
+.tabinator h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.tabinator input {
+  display: none;
+}
+.tabinator label {
+  box-sizing: border-box;
+  display: inline-block;
+  padding: 15px 25px;
+  color: #ccc;
+  margin-bottom: -1px;
+  margin-left: -1px;
+}
+.tabinator label:before {
+  display: block;
+  width: 100%;
+  height: 15px;
+  background-color: #f8f9fd;
+  position: absolute;
+  bottom: -11px;
+  left: 0;
+  z-index: 10;
+}
+.tabinator label:hover {
+  color: #888;
+  cursor: pointer;
+}
+.tabinator input:checked + label {
+  position: relative;
+  color: #000;
+  background: #f8f9fd;
+  border: 1px solid #bbb;
+  border-bottom: 0px solid #f8f9fd;
+  border-radius: 5px 5px 0 0;
+}
+.tabinator input:checked + label:after {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  /* box-shadow: 0 0 15px #939393; */
+}
+#content1,
+#content2,
+#content3,
+#content4,
+#content5,
+#content6,
+#content7,
+#content8,
+#content9,
+#content10 {
+  display: none;
+  border-top: 1px solid #bbb;
+  padding: 15px;
+
+  /* border-radius: 5px; */
+}
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4,
+#tab5:checked ~ #content5,
+#tab6:checked ~ #content6,
+#tab7:checked ~ #content7,
+#tab8:checked ~ #content8,
+#tab9:checked ~ #content9,
+#tab10:checked ~ #content10 {
+  display: block;
+  box-shadow: 0 0 15px #939393;
+}

@@ -1,0 +1,46 @@
+{% extends "admin_layout.html" %} {% block content %}
+
+<br />
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6 text-center mb-5">
+      <h2 class="heading-section">Cameras</h2>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <!-- <div style=" display: flex; justify-content :center;row-gap: 10px; flex-direction:row; height: 100%;"> -->
+    <div
+      style="
+        display: grid;
+        grid-gap: 1px;
+        grid-template-columns: repeat(3, 1fr);
+      "
+    >
+      {% for i in num_cams %}
+      <div>
+        <div
+          style="
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            vertical-align: top;
+            text-align: center;
+            margin: 10px;
+          "
+        >
+          <h5>camera id : {{i}}</h5>
+          <img
+            class="img-fluid"
+            style="display: block; margin-left: auto; margin-right: auto"
+            src="{{ url_for('video',id=i) }}"
+            alt="cam{{i}}"
+            width="100%"
+          />
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

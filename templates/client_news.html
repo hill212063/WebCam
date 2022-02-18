@@ -1,0 +1,153 @@
+{% extends "table_layout.html" %} {% block content %} {% with messages =
+get_flashed_messages() %} {% if messages %}
+<script>
+  var messages = {{ messages | safe }};
+  for (var i=0; i<messages.length; i++) {
+      Swal.fire({
+      title:"Error!",
+      text:  messages[i],
+      icon: 'error',
+      confirmButtonText: 'OK',
+      })
+  }
+</script>
+{% endif %} {% endwith %}
+<style>
+  :root {
+    scroll-behavior: auto !important;
+  }
+
+  .th-inner,
+  td {
+    color: #6c757d;
+  }
+  a {
+    color: #828bf4;
+  }
+</style>
+<br />
+<div class="row justify-content-center ml-1 mr-1" style="margin-bottom: 112px">
+  <div style="max-width: 1350px">
+    <div
+      style="
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 25px auto;
+      "
+    >
+      <h2 class="heading-section" style="color: black">News</h2>
+    </div>
+    <div id="toolbar" style="display: inline-flex">
+      <select id="select" class="form-control" name="filterAlgorithm">
+        <option value="default">All</option>
+        <option value="news">News</option>
+        <option value="promotion">Promotion</option>
+        <option value="article">Article</option>
+      </select>
+      <div style="margin-left: 10px; width: 100%">
+        <button class="btn btn-secondary" id="filterBy" style="width: 170px">
+          filter by type
+        </button>
+      </div>
+    </div>
+    <div>
+      <table
+        class="table"
+        style="
+          color: #6c757d;
+          table-layout: fixed;
+          word-break: break-word;
+          width: 100%;
+          overflow: scroll;
+        "
+        id="table"
+        data-toggle="table"
+        data-search="true"
+        data-filter-control="true"
+        data-show-export="true"
+        data-click-to-select="true"
+        data-pagination="true"
+        data-toolbar="#toolbar"
+        data-auto-refresh="true"
+      >
+        <thead>
+          <tr>
+            <th data-width="300" data-sortable="true">Subject</th>
+            <th data-width="400" data-sortable="true">Detail</th>
+            <th data-width="160" data-sortable="true">Created Time</th>
+            <th data-width="160" data-sortable="true">Modified Time</th>
+            <th data-width="105" data-sortable="true" data-field="type">
+              Type
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in range(table|length) %}
+          <tr>
+            {% for j in range(table[i]|length) %} {% if j not in [0,1,2,5] %}
+            <td style="vertical-align: middle">{{table[i][j]}}</td>
+            {% elif j == 1 %}
+            <td>
+              <div
+                style="
+                  display: inline-flex;
+                  width: 100%;
+                  min-width: 100px;
+                  justify-content: center;
+                  align-items: center;
+                "
+              >
+                <div style="min-width: 170px; height: 95.625px">
+                  <img
+                    src="{{'../static/imgs_news/'+table[i][5]}}"
+                    style="
+                      max-width: 170px;
+                      max-height: 95.625px;
+                      display: block;
+                      margin-left: auto;
+                      margin-right: auto;
+                      padding-top: 8px;
+                    "
+                  />
+                </div>
+                <div style="margin-left: 10px; width: 100%">
+                  <a
+                    href="{{url_for('news_gen',id=table[i][0])}}"
+                    target="_blank"
+                    >{{table[i][j]}}</a
+                  >
+                </div>
+              </div>
+            </td>
+            {% elif j==2 %} {% if table[i][j]|length>=80 %}
+            <td style="vertical-align: middle">
+              {{(table[i][j]|striptags)[0:80]}}...
+            </td>
+            {% else %}
+            <td style="vertical-align: middle">{{table[i][j]|striptags}}</td>
+            {% endif %} {% endif %} {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  var $table = $("#table");
+  $(function () {
+    $("#filterBy").click(function () {
+      var filterAlgorithm = $('[name="filterAlgorithm"]').val();
+      if (filterAlgorithm == "default") {
+        filterAlgorithm = ["news", "article", "promotion"];
+      }
+      $table.bootstrapTable("filterBy", {
+        type: filterAlgorithm,
+      });
+    });
+  });
+</script>
+
+{% endblock %}
