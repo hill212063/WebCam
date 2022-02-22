@@ -140,17 +140,17 @@ get_flashed_messages() %} {% if messages %}
                   </select>
                 </div>
               </div>
-              <!-- <div class="form-group mb-4">
-                <label class="label">Owner's fullname</label>
+              <div class="form-group mb-4">
+                <label class="label">Doctor's fullname</label>
                 <input
-                  name="owner"
-                  maxlength="101"
+                  name="doc_name"
+                  maxlength="50"
                   class="form-control"
-                  list="uname"
+                  list="dname"
                   autocomplete="off"
                   required="1"
                 />
-              </div> -->
+              </div>
               <div class="form-group mb-4">
                 <label class="label">Note</label>
                 <textarea
@@ -208,14 +208,14 @@ get_flashed_messages() %} {% if messages %}
           <th data-sortable="true" data-width="100">Cam ID</th>
           <th data-visible="false">Note</th>
           <th data-sortable="true">Owner</th>
-          <th data-sortable="true" data-width="150">Username</th>
+          <th data-sortable="true" data-width="150">Doctor</th>
           <th data-width="180">Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for i in range(table|length) %}
         <tr>
-          {% for j in range(table[i]|length) %} {% if j!=0 %}
+          {% for j in range(table[i]|length) %} {% if j!=0 and j!=8 %}
           <td>{{table[i][j]}}</td>
           {% endif %} {% endfor %}
           <td>
@@ -341,25 +341,19 @@ get_flashed_messages() %} {% if messages %}
                             {% endif %}
                           </select>
                         </div>
-                        <!-- <div>
-                          <label class="label" style="color: red"
-                            >***Can't change camera because the token has been
-                            created.</label
-                          >
-                        </div> -->
                       </div>
-                      <!-- <div class="form-group mb-4">
-                        <label class="label">Owner's fullname</label>
+                      <div class="form-group mb-4">
+                        <label class="label">Doctor's fullname</label>
                         <input
-                          name="owner"
-                          maxlength="101"
+                          name="doc_name"
+                          maxlength="50"
                           class="form-control"
-                          list="uname"
+                          list="dname"
                           autocomplete="off"
-                          value="{{table[i][7]}}"
+                          value="{{table[i][9]}}"
                           required="1"
                         />
-                      </div> -->
+                      </div>
                       <div class="form-group mb-4">
                         <label class="label">Note</label>
                         <textarea
@@ -446,9 +440,13 @@ get_flashed_messages() %} {% if messages %}
                       >Username : {{table[i][8]}}</label
                     >
                     <label class="label-breakword"
+                      >Doctor : {{table[i][9]}}</label
+                    >
+                    <label class="label-breakword"
                       >Note : {{table[i][6]}}</label
                     >
                   </div>
+
                   <div class="modal-footer">
                     <button
                       id="print_button{{table[i][0]}}"
@@ -481,10 +479,10 @@ get_flashed_messages() %} {% if messages %}
   <option value="{{datalist[k][m]}}"></option>
   {% endfor %} {% endfor %}
 </datalist>
-<datalist id="uname">
-  {% for k in range(userlist|length) %}
-  <option value="{{userlist[k]}}"></option>
-  {% endfor %}
+<datalist id="dname">
+  {% for k in range(doclist|length) %} {% for m in range(doclist|length) %}
+  <option value="{{doclist[k][m]}}"></option>
+  {% endfor %} {% endfor %}
 </datalist>
 <script>
      function save_change_confirm(self,e){

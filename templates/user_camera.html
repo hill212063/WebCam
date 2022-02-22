@@ -42,10 +42,11 @@ get_flashed_messages() %} {% if messages %}
         width="100%"
       />
       {% endif %}
-
+      <br />
       <p>Subject : {{data[i][1]}}</p>
       <p>Pet's name : {{data[i][2]}}</p>
       <p>Queue time : {{data[i][3]}}</p>
+      <p>Doctor : {{data[i][6]}}</p>
       <p>Note : {{data[i][4]}}</p>
     </div>
     {% endfor %}

@@ -1,6 +1,20 @@
 
 {% extends "layout.html" %}
-
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <script>
+    var messages = {{ messages | safe }};
+    for (var i=0; i<messages.length; i++) {
+        Swal.fire({
+        title:"Error!",
+        text:  messages[i],
+        icon: 'error',
+        confirmButtonText: 'OK',
+        })
+    }
+  </script>
+{% endif %}
+{% endwith %}
 {% block content %}
 <style>
   .carousel-content

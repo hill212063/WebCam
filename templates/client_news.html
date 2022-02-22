@@ -27,7 +27,7 @@ get_flashed_messages() %} {% if messages %}
 </style>
 <br />
 <div class="row justify-content-center ml-1 mr-1" style="margin-bottom: 112px">
-  <div style="max-width: 1350px">
+  <div style="max-width: 1155px">
     <div
       style="
         width: 100%;
@@ -76,8 +76,6 @@ get_flashed_messages() %} {% if messages %}
           <tr>
             <th data-width="300" data-sortable="true">Subject</th>
             <th data-width="400" data-sortable="true">Detail</th>
-            <th data-width="160" data-sortable="true">Created Time</th>
-            <th data-width="160" data-sortable="true">Modified Time</th>
             <th data-width="105" data-sortable="true" data-field="type">
               Type
             </th>
@@ -86,7 +84,7 @@ get_flashed_messages() %} {% if messages %}
         <tbody>
           {% for i in range(table|length) %}
           <tr>
-            {% for j in range(table[i]|length) %} {% if j not in [0,1,2,5] %}
+            {% for j in range(table[i]|length) %} {% if j not in [0,1,2,3] %}
             <td style="vertical-align: middle">{{table[i][j]}}</td>
             {% elif j == 1 %}
             <td>
@@ -101,7 +99,7 @@ get_flashed_messages() %} {% if messages %}
               >
                 <div style="min-width: 170px; height: 95.625px">
                   <img
-                    src="{{'../static/imgs_news/'+table[i][5]}}"
+                    src="{{'../static/imgs_news/'+table[i][3]}}"
                     style="
                       max-width: 170px;
                       max-height: 95.625px;

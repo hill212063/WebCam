@@ -58,18 +58,58 @@ mysql = MySQL(app)
 ########################   MYSQL   ##############################
 
 
+# def find_edit_username(old_uname, new_uname):
+#     try:
+#         cursor = mysql.connection.cursor()
+#         # pet table
+#         cursor.execute(
+#             """ UPDATE %s SET `username` = '%s' WHERE `username` = '%s' """
+#             % (os.getenv("DATABASE_TABLE_PET_NAME"), new_uname, old_uname)
+#         )
+#         mysql.connect.commit()
+#         # cases table
+#         cursor.execute(
+#             """ UPDATE %s SET `username` = '%s' WHERE `username` = '%s' """
+#             % (os.getenv("DATABASE_TABLE_CASES_NAME"), new_uname, old_uname)
+#         )
+#         mysql.connect.commit()
+#         cursor.close()
+#     except Exception as e:
+#         flash(str(e))
+
+
 def check_officer(off):
     account = []
     try:
         cursor = mysql.connection.cursor()
         cursor.execute(
             """SELECT * FROM `%s` WHERE `username` = '%s' """
-            % (os.getenv("DATABASE_TABLE_admin_NAME"), off)
+            % (os.getenv("DATABASE_TABLE_ADMIN_NAME"), off)
         )
         account = cursor.fetchone()
         mysql.connect.commit()
         cursor.close()
         if account == None:
+            return False
+        else:
+            return True
+    except Exception as e:
+        flash(str(e))
+        return False
+
+
+def check_doc(dname):
+    doc = []
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            """SELECT * FROM `%s` WHERE `name` = '%s' """
+            % (os.getenv("DATABASE_TABLE_DOC_NAME"), dname)
+        )
+        doc = cursor.fetchone()
+        mysql.connect.commit()
+        cursor.close()
+        if doc == None:
             return False
         else:
             return True
@@ -119,11 +159,6 @@ def check_owner(name_sur):
             return True
         else:
             return False
-        # for i in account:
-        #     if name_sur == i:
-        #         return True
-        #     else:
-        #         return False
     except Exception as e:
         flash(str(e) + "hello")
         return False
@@ -282,7 +317,7 @@ def login():
                 return redirect(url_for("submit"))
             elif session["role"] == "user":
                 session["password"] = account[2]
-                return redirect(url_for("user_case_list"))
+                return redirect(url_for("user_profile"))
         else:
             flash("Invalid username or password")
     if session["role"] == "admin":
@@ -290,7 +325,7 @@ def login():
     elif session["role"] == "officer":
         return redirect(url_for("pet_table"))
     elif session["role"] == "user":
-        return redirect(url_for("user_case_list"))
+        return redirect(url_for("user_profile"))
     return render_template("login.html")
 
 
@@ -322,27 +357,6 @@ def about():
     return render_template("about.html", user=session["username"], role=session["role"])
 
 
-# @app.route("/contactprofile")
-# def contactprofile():
-#     return render_template(
-#         "contactprofile.html", user=session["username"], role=session["role"]
-#     )
-
-
-# @app.route("/contactprofile_2")
-# def contactprofile_2():
-#     return render_template(
-#         "contactprofile_2.html", user=session["username"], role=session["role"]
-#     )
-
-
-# @app.route("/contactprofile_3")
-# def contactprofile_3():
-#     return render_template(
-#         "contactprofile_3.html", user=session["username"], role=session["role"]
-#     )
-
-
 def gen(id):
     vs = webcam(src=id).start()
     while True:
@@ -359,7 +373,7 @@ def client_news():
     try:
         cursor = mysql.connection.cursor()
         cursor.execute(
-            """SELECT id,subject,detail,create_time,modified_time,img,type FROM `%s` ORDER BY create_time DESC """
+            """SELECT id,subject,detail,img,type FROM `%s` ORDER BY create_time DESC """
             % (os.getenv("DATABASE_TABLE_NEWS_NAME"))
         )
         mysql.connection.commit()
@@ -493,7 +507,7 @@ def submit():
             cursor.close()
         except Exception as e:
             flash(str(e))
-    return render_template("admin_create_officer.html", num_cams=num_cams)
+    return render_template("admin_create_officer.html")
 
 
 @app.route("/admin/officer", methods=["GET", "POST"])
@@ -512,7 +526,7 @@ def officer():
         cursor.close()
     except Exception as e:
         flash(str(e))
-    return render_template("admin_officer.html", table=data, num_cams=num_cams)
+    return render_template("admin_officer.html", table=data)
 
 
 @app.route("/admin/officer/delete/<int:id>/", methods=["GET", "POST"])
@@ -564,6 +578,127 @@ def update_officer():
         except Exception as e:
             flash(str(e))
     return redirect(url_for("officer"))
+
+
+@app.route("/admin/user")
+def admin_user_table():
+    data = []
+    if session["role"] != "admin":
+        return redirect(url_for("login"))
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            """SELECT * FROM `%s` """ % (os.getenv("DATABASE_TABLE_USER_NAME"))
+        )
+        mysql.connection.commit()
+        data = cursor.fetchall()
+        cursor.close()
+    except Exception as e:
+        flash(str(e))
+    return render_template("admin_user_table.html", table=data)
+
+@app.route("/admin/user/delete/<int:id>/", methods=["GET", "POST"])
+def delete_row_user(id):
+    if session["role"] != "admin":
+        return redirect(url_for("login"))
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+                """SELECT `username` FROM `%s` WHERE `id` = '%s'"""
+                % (os.getenv("DATABASE_TABLE_USER_NAME"), id)
+            )
+        olduname = cursor.fetchone()
+        olduname = olduname[0]
+        cursor.execute(
+            """DELETE FROM `%s` WHERE `id`='%s' """
+            % (os.getenv("DATABASE_TABLE_USER_NAME"), id)
+        )
+        mysql.connection.commit()
+        # pet table
+        cursor.execute(
+            """DELETE FROM `%s` WHERE `username`='%s' """
+            % (
+                os.getenv("DATABASE_TABLE_PET_NAME"),
+                olduname,
+            )
+        )
+        mysql.connection.commit()
+        # cases table
+        cursor.execute(
+            """DELETE FROM `%s` WHERE `username`='%s' """
+            % (
+                os.getenv("DATABASE_TABLE_CASES_NAME"),
+                olduname,
+            )
+        )
+        mysql.connection.commit()
+        cursor.close()
+    except Exception as e:
+        flash(str(e))
+    return redirect(url_for("admin_user_table"))
+
+@app.route("/admin/user/update", methods=["GET", "POST"])
+def update_user():
+    if session["role"] != "admin":
+        return redirect(url_for("login"))
+    if request.method == "POST":
+        row_id = request.form["id"]
+        username = request.form["username"]
+        password = request.form["password"]
+        name = request.form["name"]
+        surname = request.form["surname"]
+        email = request.form["email"]
+        tel = request.form["tel"]
+        fullname = str(name) + " " + str(surname)
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute(
+                """SELECT `username` FROM `%s` WHERE `id` = '%s'"""
+                % (os.getenv("DATABASE_TABLE_USER_NAME"), row_id)
+            )
+            olduname = cursor.fetchone()
+            olduname = olduname[0]
+            cursor.execute(
+                """UPDATE `%s` SET `username`='%s',`password`='%s',`name`='%s',`surname`='%s',`email`='%s',`tel`='%s' WHERE `username`='%s' """
+                % (
+                    os.getenv("DATABASE_TABLE_USER_NAME"),
+                    username,
+                    password,
+                    name,
+                    surname,
+                    email,
+                    tel,
+                    olduname,
+                )
+            )
+            mysql.connection.commit()
+            # pet table
+            cursor.execute(
+                """UPDATE `%s` SET `username`='%s',`owner`='%s' WHERE `username`='%s' """
+                % (
+                    os.getenv("DATABASE_TABLE_PET_NAME"),
+                    username,
+                    fullname,
+                    olduname,
+                )
+            )
+            mysql.connection.commit()
+            # cases table
+            cursor.execute(
+                """UPDATE `%s` SET `username`='%s',`owner`='%s' WHERE `username`='%s' """
+                % (
+                    os.getenv("DATABASE_TABLE_CASES_NAME"),
+                    username,
+                    fullname,
+                    olduname,
+                )
+            )
+            mysql.connection.commit()
+            # not update the tel to pet and case table because tel can change whatever you want
+            cursor.close()
+        except Exception as e:
+            flash(str(e))
+    return redirect(url_for("admin_user_table"))
 
 
 #######################################   ADMIN   #######################################
@@ -718,6 +853,7 @@ def cases_table():
     data = []
     datalist = []
     userlist = []
+    doclist = []
     if session["role"] != "officer":
         return redirect(url_for("login"))
     try:
@@ -728,7 +864,7 @@ def cases_table():
         )
         mysql.connection.commit()
         cursor.execute(
-            """SELECT `id`,`subject`,`pet_name`,`queue_time`,`status`,`camera_id`,`note`,`owner`,`username` FROM `%s` ORDER BY
+            """SELECT `id`,`subject`,`pet_name`,`queue_time`,`status`,`camera_id`,`note`,`owner`,`username`,`doctor` FROM `%s` ORDER BY
     queue_time=NOW() DESC,
     queue_time<NOW() DESC,
     queue_time>NOW() ASC """
@@ -750,6 +886,11 @@ def cases_table():
         userlist = list(userlist)
         for i in range(len(userlist)):
             userlist[i] = userlist[i][0] + " " + userlist[i][1]
+        cursor.execute(
+            """SELECT name FROM `%s`""" % (os.getenv("DATABASE_TABLE_DOC_NAME"))
+        )
+        mysql.connection.commit()
+        doclist = cursor.fetchall()
         cursor.close()
     except Exception as e:
         flash(str(e))
@@ -759,6 +900,7 @@ def cases_table():
         num_cams=num_cams,
         datalist=datalist,
         userlist=userlist,
+        doclist=doclist,
         user=session["username"],
     )
 
@@ -769,6 +911,7 @@ def cases_table_add():
         return redirect(url_for("login"))
     if request.method == "POST":
         cam = request.form["cam_id"]
+        doc_name = request.form["doc_name"]
         # owner = request.form["owner"]
         subject = request.form["subject"]
         queue_timestamp = request.form["queue"]
@@ -777,13 +920,10 @@ def cases_table_add():
         if not check_pet(pet_name):
             flash("Pet's name not found!")
             return redirect(url_for("cases_table"))
-        # if not check_owner(owner):
-        #     flash("Owner not found!")
-        #     return redirect(url_for("cases_table"))
+        if not check_doc(doc_name):
+            flash("Doctor's name not found!")
+            return redirect(url_for("cases_table"))
         try:
-            # if not account:
-            #     flash("Username not found!")
-            #     return redirect(url_for("cases_table"))
             cursor = mysql.connection.cursor()
             cursor.execute(
                 """ SELECT owner,username FROM %s WHERE pet_name = '%s' """
@@ -796,8 +936,8 @@ def cases_table_add():
 
             if cam == "None":
                 cursor.execute(
-                    """INSERT INTO `%s` ( `subject`, `pet_name`,`queue_time`,`camera_id`, `note`,`owner`,`username`)
-                 VALUES ('%s','%s','%s',NULL,'%s','%s','%s');"""
+                    """INSERT INTO `%s` ( `subject`, `pet_name`,`queue_time`,`camera_id`, `note`,`owner`,`username,`doctor`)
+                 VALUES ('%s','%s','%s',NULL,'%s','%s','%s','%s');"""
                     % (
                         os.getenv("DATABASE_TABLE_CASES_NAME"),
                         subject,
@@ -806,12 +946,13 @@ def cases_table_add():
                         note,
                         tmp[0],
                         tmp[1],
+                        doc_name,
                     )
                 )
             else:
                 cursor.execute(
-                    """INSERT INTO `%s` ( `subject`, `pet_name`,`queue_time`,`camera_id`, `note`,`owner`,`username`)
-                VALUES ('%s','%s','%s','%s','%s','%s','%s');"""
+                    """INSERT INTO `%s` ( `subject`, `pet_name`,`queue_time`,`camera_id`, `note`,`owner`,`username`,`doctor`)
+                VALUES ('%s','%s','%s','%s','%s','%s','%s','%s');"""
                     % (
                         os.getenv("DATABASE_TABLE_CASES_NAME"),
                         subject,
@@ -821,6 +962,7 @@ def cases_table_add():
                         note,
                         tmp[0],
                         tmp[1],
+                        doc_name,
                     )
                 )
             mysql.connection.commit()
@@ -858,18 +1000,16 @@ def update_cases():
         pet_name = request.form["pet_name"]
         note = request.form["note"]
         cam_id = request.form["cam_id_edit"]
+        doc_name = request.form["doc_name"]
         # owner = request.form["owner"]
         if not check_pet(pet_name):
             flash("Pet's name not found!")
             return redirect(url_for("cases_table"))
-        # if not check_owner(owner):
-        #     flash("Owner not found!")
-        #     return redirect(url_for("cases_table"))
+        if not check_doc(doc_name):
+            flash("Doctor's name not found!")
+            return redirect(url_for("cases_table"))
+
         try:
-            # account = check_user_from_name(owner)
-            # if not account:
-            #     flash("Username not found!")
-            #     return redirect(url_for("cases_table"))
             cursor = mysql.connection.cursor()
             cursor.execute(
                 """ SELECT owner,username FROM %s WHERE pet_name = '%s' """
@@ -881,7 +1021,7 @@ def update_cases():
             tmp = cursor.fetchone()
             if cam_id == "None":
                 cursor.execute(
-                    """UPDATE `%s` SET `subject`='%s',`pet_name`='%s',`queue_time`='%s',`camera_id`=NULL,`note`='%s',`owner`='%s',`username`='%s' WHERE `id`='%s' """
+                    """UPDATE `%s` SET `subject`='%s',`pet_name`='%s',`queue_time`='%s',`camera_id`=NULL,`note`='%s',`owner`='%s',`username`='%s',`doctor`='%s' WHERE `id`='%s' """
                     % (
                         os.getenv("DATABASE_TABLE_CASES_NAME"),
                         subject,
@@ -890,12 +1030,13 @@ def update_cases():
                         note,
                         tmp[0],
                         tmp[1],
+                        doc_name,
                         row_id,
                     )
                 )
             else:
                 cursor.execute(
-                    """UPDATE `%s` SET `subject`='%s',`pet_name`='%s',`queue_time`='%s',`camera_id`='%s',`note`='%s',`owner`='%s',`username`='%s' WHERE `id`='%s' """
+                    """UPDATE `%s` SET `subject`='%s',`pet_name`='%s',`queue_time`='%s',`camera_id`='%s',`note`='%s',`owner`='%s',`username`='%s',`doctor`='%s' WHERE `id`='%s' """
                     % (
                         os.getenv("DATABASE_TABLE_CASES_NAME"),
                         subject,
@@ -905,6 +1046,7 @@ def update_cases():
                         note,
                         tmp[0],
                         tmp[1],
+                        doc_name,
                         row_id,
                     )
                 )
@@ -1158,7 +1300,7 @@ def user_case_list():
         for i in pet:
             for j in i:
                 cursor.execute(
-                    """SELECT subject,pet_name,queue_time,status,camera_id,note FROM `%s` WHERE `pet_name`='%s' AND status = 'wait' """
+                    """SELECT subject,pet_name,queue_time,status,camera_id,note,doctor FROM `%s` WHERE `pet_name`='%s' AND status = 'wait' """
                     % (
                         os.getenv("DATABASE_TABLE_CASES_NAME"),
                         j,
@@ -1179,11 +1321,12 @@ def user_pet_list():
     data = []
     if session["role"] != "user":
         return redirect(url_for("login"))
+    username = session["username"]
     try:
         cursor = mysql.connection.cursor()
         cursor.execute(
             """ SELECT `pet_name`, `pet_age`, `pet_type`, `regis_time` FROM %s WHERE `username` = '%s' """
-            % (os.getenv("DATABASE_TABLE_PET_NAME"), session["username"])
+            % (os.getenv("DATABASE_TABLE_PET_NAME"), username)
         )
         mysql.connection.commit()
         data = cursor.fetchall()
@@ -1202,7 +1345,7 @@ def user_pet_list():
         cursor.close()
     except Exception as e:
         flash(str(e))
-    return render_template("user_pet_list.html", table=data, user=session["username"])
+    return render_template("user_pet_list.html", table=data, user=username)
 
 
 @app.route("/user/camera")
@@ -1210,18 +1353,19 @@ def user_cam():
     data = []
     if session["role"] != "user":
         return redirect(url_for("login"))
+    username = session["username"]
     try:
         cursor = mysql.connection.cursor()
         cursor.execute(
-            """ SELECT `id`,`subject`,`pet_name`, `queue_time`, `note`, `camera_id` FROM %s WHERE `username` = '%s' AND status='wait' """
-            % (os.getenv("DATABASE_TABLE_CASES_NAME"), session["username"])
+            """ SELECT `id`,`subject`,`pet_name`, `queue_time`, `note`, `camera_id`,`doctor` FROM %s WHERE `username` = '%s' AND status='wait' """
+            % (os.getenv("DATABASE_TABLE_CASES_NAME"), username)
         )
         mysql.connection.commit()
         data = cursor.fetchall()
         cursor.close()
     except Exception as e:
         flash(str(e))
-    return render_template("user_camera.html", data=data, user=session["username"])
+    return render_template("user_camera.html", data=data, user=username)
 
 
 @app.route("/user/camera/<int:id>")
@@ -1229,6 +1373,86 @@ def user_video(id):
     if session["role"] != "user":
         return redirect(url_for("login"))
     return Response(gen(id), mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+@app.route("/user/profile")
+def user_profile():
+    if session["role"] != "user":
+        return redirect(url_for("login"))
+    data = []
+    username = session["username"]
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            """SELECT * FROM %s WHERE `username` = '%s' """
+            % (os.getenv("DATABASE_TABLE_USER_NAME"), username)
+        )
+        mysql.connection.commit()
+        data = cursor.fetchone()
+        cursor.close()
+    except Exception as e:
+        flash(str(e))
+    return render_template("user_profile.html", data=data, user=username)
+
+
+@app.route("/user/profile/edit", methods=["GET", "POST"])
+def update_profile():
+    if session["role"] != "user":
+        return redirect(url_for("login"))
+    if request.method == "POST":
+        row_id = request.form["id"]
+        username = request.form["username"]
+        password = request.form["password"]
+        name = request.form["name"]
+        surname = request.form["surname"]
+        email = request.form["email"]
+        tel = request.form["tel"]
+        fullname = str(name) + " " + str(surname)
+        try:
+            cursor = mysql.connection.cursor()
+            cursor.execute(
+                """UPDATE `%s` SET `username`='%s',`password`='%s',`name`='%s',`surname`='%s',`email`='%s',`tel`='%s' WHERE `id`='%s' """
+                % (
+                    os.getenv("DATABASE_TABLE_USER_NAME"),
+                    username,
+                    password,
+                    name,
+                    surname,
+                    email,
+                    tel,
+                    row_id,
+                )
+            )
+            mysql.connection.commit()
+            # pet table
+            cursor.execute(
+                """UPDATE `%s` SET `username`='%s',`owner`='%s' WHERE `username`='%s' """
+                % (
+                    os.getenv("DATABASE_TABLE_PET_NAME"),
+                    username,
+                    fullname,
+                    session["username"],
+                )
+            )
+            mysql.connection.commit()
+            # cases table
+            cursor.execute(
+                """UPDATE `%s` SET `username`='%s',`owner`='%s' WHERE `username`='%s' """
+                % (
+                    os.getenv("DATABASE_TABLE_CASES_NAME"),
+                    username,
+                    fullname,
+                    session["username"],
+                )
+            )
+            mysql.connection.commit()
+            # not update the tel to pet and case table because tel can change whatever you want
+
+            cursor.close()
+            session["username"] = username
+        except Exception as e:
+            flash(str(e))
+    return redirect(url_for("user_profile"))
 
 
 #######################################   user   ########################################

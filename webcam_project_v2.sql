@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 18, 2022 at 12:32 PM
+-- Generation Time: Feb 22, 2022 at 02:45 PM
 -- Server version: 10.4.22-MariaDB
 -- PHP Version: 7.4.27
 
@@ -65,19 +65,41 @@ CREATE TABLE `cases` (
   `camera_id` int(3) DEFAULT NULL,
   `status` varchar(20) NOT NULL DEFAULT 'wait',
   `owner` varchar(101) NOT NULL,
-  `username` varchar(20) NOT NULL
+  `username` varchar(20) NOT NULL,
+  `doctor` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `cases`
 --
 
-INSERT INTO `cases` (`id`, `subject`, `pet_name`, `queue_time`, `regis_time`, `note`, `camera_id`, `status`, `owner`, `username`) VALUES
-(1, 'No1', 'Bob', '2022-02-11 16:17:00', '2022-02-08 08:13:04', 'dasdSddasd', NULL, 'complete', 'กฟหก กฟหก', 'กฟหก'),
-(2, 'No2', 'Joe', '2022-02-09 16:27:00', '2022-02-08 12:24:44', 'dasd', NULL, 'complete', 'dasd dasd', 'dasd'),
-(3, 'No3', 'Dill', '2022-02-17 04:56:00', '2022-02-10 04:56:40', '', NULL, 'complete', 'dasd dasd', 'dasd'),
-(4, 'No4', 'Bob', '2022-02-15 16:24:00', '2022-02-14 16:24:26', '', NULL, 'complete', 'กฟหก กฟหก', 'กฟหก'),
-(6, 'No5', 'Non', '2022-02-19 04:18:00', '2022-02-18 04:18:56', 'dsadas', 1, 'wait', 'dasd dasd', 'dasd');
+INSERT INTO `cases` (`id`, `subject`, `pet_name`, `queue_time`, `regis_time`, `note`, `camera_id`, `status`, `owner`, `username`, `doctor`) VALUES
+(2, 'No2', 'Joe', '2022-02-09 16:27:00', '2022-02-08 12:24:44', 'dasd', NULL, 'complete', 'dasdtes dasd', 'dasd2', 'Marry Smith'),
+(3, 'No3', 'Dill', '2022-02-17 04:56:00', '2022-02-10 04:56:40', '', NULL, 'complete', 'dasdtes dasd', 'dasd2', 'Bob Brown'),
+(6, 'No5', 'Non', '2022-02-19 04:18:00', '2022-02-18 04:18:56', 'dsadas', NULL, 'complete', 'dasdtes dasd', 'dasd2', 'Roxie Swanson'),
+(7, 'test', 'Test', '2022-02-19 13:20:00', '2022-02-18 13:20:37', 'sdfsdf', NULL, 'complete', 'test_rgis test_rgis', 'test_rgis', 'Ann Richmond');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `doctor`
+--
+
+CREATE TABLE `doctor` (
+  `id` int(3) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `role` varchar(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `doctor`
+--
+
+INSERT INTO `doctor` (`id`, `name`, `role`) VALUES
+(1, 'Marry Smith', 'veterinary'),
+(2, 'Bob Brown', 'veterinary'),
+(3, 'Ann Richmond', 'veterinary'),
+(4, 'Roxie Swanson', 'veterinary');
 
 -- --------------------------------------------------------
 
@@ -128,11 +150,11 @@ CREATE TABLE `pet` (
 --
 
 INSERT INTO `pet` (`id`, `pet_name`, `pet_age`, `pet_type`, `owner`, `tel`, `regis_time`, `username`, `noti2`) VALUES
-(2, 'Bob', '1:4', 'dog', 'กฟหก กฟหก', '0000000002', '2022-02-08 06:14:25', 'กฟหก', ''),
-(3, 'Joe', '1:1', 'cat', 'dasd dasd', '0000000000', '2022-02-08 12:24:00', 'dasd', ''),
-(4, 'Dill', '2:3', 'cat', 'dasd dasd', '0000000000', '2022-02-10 13:54:59', 'dasd', ''),
-(5, 'dasd', '0:1', 'dsad', 'dasd dasd', '0000000000', '2022-02-14 16:10:04', 'dasd', ''),
-(8, 'Non', '2:11', 'cat', 'dasd dasd', '0000000000', '2022-02-18 04:00:12', 'dasd', '');
+(3, 'Joe', '1:1', 'cat', 'dasdtes dasd', '0000000000', '2022-02-08 12:24:00', 'dasd2', ''),
+(4, 'Dill', '2:3', 'cat', 'dasdtes dasd', '0000000000', '2022-02-10 13:54:59', 'dasd2', ''),
+(5, 'dasd', '0:1', 'dsad', 'dasdtes dasd', '0000000000', '2022-02-14 16:10:04', 'dasd2', ''),
+(8, 'Non', '2:11', 'cat', 'dasdtes dasd', '0000000000', '2022-02-18 04:00:12', 'dasd2', ''),
+(9, 'Test', '1:1', 'cat', 'test_rgis test_rgis', '0000000000', '2022-02-18 13:20:21', 'test_rgis', '');
 
 -- --------------------------------------------------------
 
@@ -155,11 +177,11 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `name`, `surname`, `email`, `tel`) VALUES
-(1, 'dasd', '1234', 'dasd', 'dasd', 'dasd@email.com', '0000000001'),
-(2, 'กฟหก', '1234', 'กฟหก', 'กฟหก', 'กฟหก@email.com', '0000000000'),
+(1, 'dasd2', '1234', 'dasdtes', 'dasd', 'dasd@email.com', '0000000001'),
 (3, 'test', '1234', 'Testuser', 'Testuser', 'test@email.com', '0000000000'),
 (7, 'aa', 'aaaa', 'Test Posting', 'KJ', 'a@gmail.com', '1234567890'),
-(8, 'dd', '1234', 'dasd', 'dasd', 'test1@email.com', '0000000001');
+(8, 'dd', '1234', 'dasd', 'dasd', 'test1@email.com', '0000000001'),
+(10, 'test_rgis', '1234', 'test_rgis', 'test_rgis', 'test1@email.com', '0000000000');
 
 --
 -- Indexes for dumped tables
@@ -175,6 +197,12 @@ ALTER TABLE `admin`
 -- Indexes for table `cases`
 --
 ALTER TABLE `cases`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `doctor`
+--
+ALTER TABLE `doctor`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -209,7 +237,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `cases`
 --
 ALTER TABLE `cases`
-  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `doctor`
+--
+ALTER TABLE `doctor`
+  MODIFY `id` int(3) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `news`
@@ -221,13 +255,13 @@ ALTER TABLE `news`
 -- AUTO_INCREMENT for table `pet`
 --
 ALTER TABLE `pet`
-  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 DELIMITER $$
 --

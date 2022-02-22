@@ -177,7 +177,7 @@ get_flashed_messages() %} {% if messages %}
           <th data-sortable="true">Owner</th>
           <th data-sortable="true" data-width="200">Tel</th>
           <th data-sortable="true" data-width="150">Username</th>
-          <th data-width="150">Actions</th>
+          <th data-width="100">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -195,7 +195,7 @@ get_flashed_messages() %} {% if messages %}
           </td>
           {% endif %} {% endfor %}
           <td>
-            <div style="width: 150px">
+            <div style="width: 100px">
               <a
                 id="edit{{table[i][0]}} "
                 type="button"
