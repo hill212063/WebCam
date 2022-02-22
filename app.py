@@ -58,26 +58,6 @@ mysql = MySQL(app)
 ########################   MYSQL   ##############################
 
 
-# def find_edit_username(old_uname, new_uname):
-#     try:
-#         cursor = mysql.connection.cursor()
-#         # pet table
-#         cursor.execute(
-#             """ UPDATE %s SET `username` = '%s' WHERE `username` = '%s' """
-#             % (os.getenv("DATABASE_TABLE_PET_NAME"), new_uname, old_uname)
-#         )
-#         mysql.connect.commit()
-#         # cases table
-#         cursor.execute(
-#             """ UPDATE %s SET `username` = '%s' WHERE `username` = '%s' """
-#             % (os.getenv("DATABASE_TABLE_CASES_NAME"), new_uname, old_uname)
-#         )
-#         mysql.connect.commit()
-#         cursor.close()
-#     except Exception as e:
-#         flash(str(e))
-
-
 def check_officer(off):
     account = []
     try:
